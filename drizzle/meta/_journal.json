@@ -1,0 +1,27 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1694204800633,
+      "tag": "0000_charming_mystique",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1694412497717,
+      "tag": "0001_breezy_speed",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1694412733368,
+      "tag": "0002_low_mister_fear",
+      "breakpoints": true
+    }
+  ]
+}
