@@ -1,30 +1,33 @@
-import { auth, googleAuth } from '../../../lucia.js';
+import { auth, googleAuth } from '$lib/server/lucia.js';
 import { OAuthRequestError } from '@lucia-auth/oauth';
 import { fail, redirect } from '@sveltejs/kit';
 
-export const GET = async ({ url, cookies, locals }) => {
+export const GET = async ({ url, cookies, locals, request }) => {
   console.log("Response From Callback")
   const session = await locals.auth.validate();
   if (session) {
-    throw redirect(302, '/')
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: '/'
+      }
+    });
   }
   const storedState = cookies.get('google_oauth_state');
   const state = url.searchParams.get('state');
   const code = url.searchParams.get('code');
   // validate state
   if (!storedState || !state || storedState !== state || !code) {
-    throw fail(400)
+    return new Response(null, {
+      status: 400
+    });
   }
   try {
     const { getExistingUser, googleUser, googleTokens, createUser } = await googleAuth.validateCallback(code);
-
+    console.log("GOOGLE USER", googleUser, "\n", "GOOGLE TOKEN", JSON.stringify(googleTokens, null, 2))
     const getUser = async () => {
-      try {
-        const existingUser = await getExistingUser();
-        if (existingUser) return existingUser;
-      } catch (error) {
-        console.log(error)
-      }
+      const existingUser = await getExistingUser();
+      if (existingUser) return existingUser;
       const user = await createUser({
         attributes: {
           name: googleUser.given_name,
@@ -34,9 +37,7 @@ export const GET = async ({ url, cookies, locals }) => {
       });
       return user;
     };
-    console.log("FETCHING USER")
     const user = await getUser();
-    console.log("USER", user)
     const session = await auth.createSession({
       userId: user.userId,
       attributes: {
@@ -45,12 +46,21 @@ export const GET = async ({ url, cookies, locals }) => {
       }
     });
     locals.auth.setSession(session);
-    throw redirect(302, "/")
-  } catch (e) {
-    if (e instanceof OAuthRequestError) {
-      // invalid code
-      throw e
-    }
-    throw fail(500)
-  }
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: '/'
+      }
+    });
+	} catch (e) {
+		if (e instanceof OAuthRequestError) {
+			// invalid code
+			return new Response(null, {
+				status: 400
+			});
+		}
+		return new Response(null, {
+			status: 500
+		});
+	}
 };

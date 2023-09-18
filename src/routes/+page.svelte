@@ -2,11 +2,29 @@
 	import type { Temporal } from '@js-temporal/polyfill';
 	import DatePicker from '../modules/date-picker.svelte';
 	import TimePicker from '../modules/time-picker.svelte';
-
+	import type { PageData } from './$types';
+	console.log('SERVER RENDERED');
 	let date: Temporal.PlainDate;
 	let startAt: Temporal.PlainTime;
 	let duration: number;
+
+	export let data: PageData;
+	$: logged = !!data?.sessionId ? true : false;
 </script>
+
+<pre>{JSON.stringify(data, null, 2)}</pre>
+
+{#if logged}
+	<form method="POST" action="?/logout">
+		<button>Logout</button>
+	</form>
+{/if}
+
+{#if !logged}
+	<form method="POST" action="?/login">
+		<button>Login</button>
+	</form>
+{/if}
 
 <div class="p-6 w-max flex gap-4">
 	<DatePicker bind:selected={date} />

@@ -4,7 +4,7 @@ import { dev } from "$app/environment";
 
 declare global {
 	// eslint-disable-next-line no-var
-	var __prisma: import('@upstash/redis').Redis;
+	var __upstash_kv: import('@upstash/redis').Redis;
 }
 
 const upstashClient = new Redis({
@@ -13,7 +13,7 @@ const upstashClient = new Redis({
 });
 
 if (dev) {
-	globalThis.__prisma = upstashClient;
+	globalThis.__upstash_kv = upstashClient;
 }
 
 export default upstashClient;
