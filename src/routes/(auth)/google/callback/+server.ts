@@ -1,6 +1,5 @@
 import { auth, googleAuth } from '$lib/server/lucia.js';
 import { OAuthRequestError } from '@lucia-auth/oauth';
-import { fail, redirect } from '@sveltejs/kit';
 
 export const GET = async ({ url, cookies, locals, request }) => {
   console.log("Response From Callback")
@@ -52,15 +51,15 @@ export const GET = async ({ url, cookies, locals, request }) => {
         Location: '/'
       }
     });
-	} catch (e) {
-		if (e instanceof OAuthRequestError) {
-			// invalid code
-			return new Response(null, {
-				status: 400
-			});
-		}
-		return new Response(null, {
-			status: 500
-		});
-	}
+  } catch (e) {
+    if (e instanceof OAuthRequestError) {
+      // invalid code
+      return new Response(null, {
+        status: 400
+      });
+    }
+    return new Response(null, {
+      status: 500
+    });
+  }
 };
