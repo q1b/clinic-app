@@ -1,12 +1,12 @@
 import { lucia } from "lucia";
 import { sveltekit } from "lucia/middleware";
 import { dev } from "$app/environment";
-import { google } from "@lucia-auth/oauth/providers"
+import { google } from "@lucia-auth/oauth/providers";
 import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI, GOOGLE_SCOPE } from "$env/static/private";
 import upstashClient from "./kv";
 import { upstash } from "@lucia-auth/adapter-session-redis";
 import { pg } from "@lucia-auth/adapter-postgresql";
-import { pool } from "./db";
+import { pool } from "$lib/server/db";
 
 // default values
 export const auth = lucia({
@@ -38,7 +38,7 @@ export const googleAuth = google(auth, {
   clientId: GOOGLE_CLIENT_ID,
   clientSecret: GOOGLE_CLIENT_SECRET,
   accessType: 'offline',
-  redirectUri: GOOGLE_REDIRECT_URI,
+  redirectUri: dev ? 'http://localhost:3000/google/callback' : GOOGLE_REDIRECT_URI,
   scope: ['openid', 'email', 'profile', GOOGLE_SCOPE],
 });
 
