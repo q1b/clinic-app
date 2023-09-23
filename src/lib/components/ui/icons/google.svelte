@@ -1,22 +1,17 @@
 <script lang="ts">
-	// @ts-ignore
-	import * as defaultAttributes from 'lucide-svelte/dist/svelte/defaultAttributes';
-
-	export let name: string;
-	export let color = 'currentColor';
-	export let size: number | string = 24;
+	export let name: string = 'google';
+	export let size: number | string = 1.3;
 	export let strokeWidth: number | string = 2;
 	export let absoluteStrokeWidth: boolean = false;
 </script>
 
 <svg
-	{...defaultAttributes}
 	{...$$restProps}
 	shape-rendering="geometricPrecision"
 	class={` lucide-${name} ${$$props.class ?? ''}`}
-	stroke={color}
-	width={0.98 * +`${size}`}
-	height={size}
+	stroke="none"
+	width={`${0.98 * +`${size}`}em`}
+	height={`${size}em`}
 	viewBox="0 0 256 262"
 	stroke-width={absoluteStrokeWidth ? (Number(strokeWidth) * 24) / Number(size) : strokeWidth}
 >
