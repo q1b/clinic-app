@@ -18,7 +18,9 @@
 <header class="w-full max-w-sm bg-white px-3 py-2 flex justify-between items-center">
 	<div id="logo" class="flex items-center gap-x-2 text-slate-700">
 		{#if data.user?.image}
-			<img width={48} height={48} src={data.user.image} aria-hidden="true" alt="Avatar Picture" />
+			<a href={`/students/student/${data.user.id}`}>
+				<img width={48} height={48} src={data.user.image} aria-hidden="true" alt="Avatar Picture" />
+			</a>
 		{:else}
 			<Logo size={48} />
 		{/if}
