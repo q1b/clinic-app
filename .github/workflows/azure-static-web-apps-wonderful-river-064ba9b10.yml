@@ -24,6 +24,8 @@ jobs:
         env: # Or as an environment variable
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DATABASE_AUTH_TOKEN: ${{ secrets.DATABASE_AUTH_TOKEN}}
+          PUBLIC_CLOUDINARY_CLOUD_NAME: ${{ secrets.PUBLIC_CLOUDINARY_CLOUD_NAME }}
+          PUBLIC_CLOUDINARY_UPLOAD_PRESET: ${{ secrets.PUBLIC_CLOUDINARY_UPLOAD_PRESET }}
           UPSTASH_URL: ${{ secrets.UPSTASH_URL }}
           UPSTASH_TOKEN: ${{ secrets.UPSTASH_TOKEN }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
