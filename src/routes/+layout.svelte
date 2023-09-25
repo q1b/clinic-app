@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.postcss';
-	import { CheckIcon, LogOutIcon, XIcon } from 'lucide-svelte';
+	import { LogOutIcon } from 'lucide-svelte';
 	import Logo from '$lib/components/ui/logo.svelte';
 	import Google from '$lib/components/ui/icons/google.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
@@ -15,14 +15,18 @@
 	<title>Osteopath Student</title>
 </svelte:head>
 
-<header class="w-full max-w-5xl bg-white px-3 py-2 flex justify-between items-center">
+<header class="w-full max-w-sm bg-white px-3 py-2 flex justify-between items-center">
 	<div id="logo" class="flex items-center gap-x-2 text-slate-700">
-		<Logo size={32} />
+		{#if data.user?.image}
+			<img width={48} height={48} src={data.user.image} aria-hidden="true" alt="Avatar Picture" />
+		{:else}
+			<Logo size={48} />
+		{/if}
 	</div>
 	<nav>
 		<form
 			method="POST"
-			action={data.logged ? '?/logout' : '?/login'}
+			action={data.logged ? '/?/logout' : '/?/login'}
 			use:enhance={() => {
 				loading = true;
 				return async ({ update }) => {
@@ -45,7 +49,9 @@
 		</form>
 	</nav>
 </header>
-<pre class="max-w-md overflow-auto">{JSON.stringify(data, null, 2)}</pre>
-<main class="">
+
+<!-- <pre class="max-w-md overflow-auto">{JSON.stringify(data, null, 2)}</pre> -->
+
+<main class="max-w-sm flex flex-col w-full">
 	<slot />
 </main>

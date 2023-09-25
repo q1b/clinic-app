@@ -5,15 +5,15 @@ import { google } from "@lucia-auth/oauth/providers";
 import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI, GOOGLE_SCOPE } from "$env/static/private";
 import upstashClient from "./kv";
 import { upstash } from "@lucia-auth/adapter-session-redis";
-import { pg } from "@lucia-auth/adapter-postgresql";
-import { pool } from "$lib/server/db";
+import { libsql } from "@lucia-auth/adapter-sqlite";
+import { client } from "$lib/server/db";
 
 // default values
 export const auth = lucia({
   env: dev ? "DEV" : "PROD",
   middleware: sveltekit(),
   adapter: {
-    user: pg(pool, {
+    user: libsql(client, {
       session: null,
       user: 'user',
       key: 'key'

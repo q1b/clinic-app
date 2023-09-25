@@ -1,27 +1,33 @@
-import { pgTable, text, varchar } from 'drizzle-orm/pg-core';
+import { relations } from 'drizzle-orm';
+import { text, sqliteTable } from 'drizzle-orm/sqlite-core';
 
-export const users = pgTable('user', {
-  id: varchar('id', {
-    length: 15, // change this when using custom user ids
-  }).primaryKey(),
+export const user = sqliteTable('user', {
+  id: text('id').primaryKey(),
   // other user attributes
-  username: text('username'),
+  // username: text('username'),
   name: text('name'),
   email: text('email'),
   image: text('image'),
+  phone_number: text('phone_number'),
+  bio: text('bio').default('')
 });
 
-export const keys = pgTable('key', {
-  id: varchar('id', {
-    length: 255,
-  }).primaryKey(),
-  userId: varchar('user_id', {
+export const userRelations = relations(user, ({ many }) => ({
+  keys: many(key),
+}));
+
+export const key = sqliteTable('key', {
+  id: text('id').primaryKey(),
+  userId: text('user_id', {
     length: 15,
-  }).notNull(),
-  // .references(() => user.id),
-  hashedPassword: varchar('hashed_password', {
-    length: 255,
-  }),
+  }).notNull()
+    .references(() => user.id),
+  hashedPassword: text('hashed_password'),
 });
 
-// Note: PlanetScale does not support foreign keys, that's why the references() method is commented out.
+export const keyRelations = relations(key, ({ one }) => ({
+  user: one(user, {
+    fields: [key.userId],
+    references: [user.id],
+  }),
+}))

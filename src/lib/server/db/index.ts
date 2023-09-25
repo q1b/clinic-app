@@ -1,16 +1,9 @@
 import * as schema from './schema';
-import { drizzle } from "drizzle-orm/node-postgres";
-import pg from 'pg';
-import { DATABASE_URL } from '$env/static/private';
-import { dev } from '$app/environment';
+import { drizzle } from 'drizzle-orm/libsql';
+import { DATABASE_URL, DATABASE_AUTH_TOKEN } from '$env/static/private';
 
-export const pool = new pg.Pool({
-	connectionString: DATABASE_URL
-});
+import { createClient } from "@libsql/client";
 
-export const db = drizzle(pool, { schema });
+export const client = createClient({ url: DATABASE_URL, authToken: DATABASE_AUTH_TOKEN });
 
-if (dev) {
-	const { migrate } = await import('drizzle-orm/node-postgres/migrator');
-	await migrate(db, { migrationsFolder: "drizzle" })
-}
+export const db = drizzle(client, { schema });
