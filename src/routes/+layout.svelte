@@ -14,10 +14,10 @@
 </script>
 
 <svelte:head>
-	<title>Osteopath Student</title>
+	<title>Home Page</title>
 </svelte:head>
 
-<header class="w-full max-w-sm bg-white px-3 py-2 flex justify-between items-center">
+<header class="w-full max-w-sm bg-white px-3 py-4 flex justify-between items-center">
 	<div id="logo" class="flex items-center gap-x-2 text-slate-700">
 		{#if $page.url.pathname === '/'}
 			{#if data.user?.image}
@@ -69,6 +69,6 @@
 
 <!-- <pre class="max-w-md overflow-auto">{JSON.stringify(data, null, 2)}</pre> -->
 
-<main class="max-w-sm flex flex-col w-full">
+<main class="max-w-sm flex flex-col w-full px-1 sm:p-0">
 	<slot />
 </main>
