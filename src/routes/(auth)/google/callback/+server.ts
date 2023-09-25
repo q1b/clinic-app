@@ -31,7 +31,9 @@ export const GET = async ({ url, cookies, locals, request }) => {
         attributes: {
           name: googleUser.given_name,
           image: googleUser.picture,
-          email: googleUser.email
+          email: googleUser.email,
+          bio: null,
+          phone_number: null
         }
       });
       return user;

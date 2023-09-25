@@ -12,6 +12,9 @@ export const user = sqliteTable('user', {
   bio: text('bio').default('')
 });
 
+export type User = typeof user.$inferSelect; // return type when queried
+// export type NewUser = typeof user.$inferInsert; // insert type
+
 export const userRelations = relations(user, ({ many }) => ({
   keys: many(key),
 }));

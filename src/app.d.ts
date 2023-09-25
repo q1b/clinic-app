@@ -1,20 +1,13 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 /// <reference types="svelte-adapter-azure-swa" />
-type UserData = {
-	id: string
-	email?: string;
-	image: string;
-	name: string;
-	username: string | null;
-}
 
 declare global {
 	namespace App {
 		interface Locals {
 			auth: import('lucia').AuthRequest;
 			session: import('lucia').Session & { access_token: string; refresh_token: string | null } | null;
-			user: UserData | null
+			user: import('$lib/server/db/schema/index').User | null
 		}
 	}
 }
@@ -23,7 +16,7 @@ declare global {
 declare global {
 	namespace Lucia {
 		type Auth = import('./lib/server/lucia').Auth;
-		type DatabaseUserAttributes = UserData; // formerly `UserAttributes`
+		type DatabaseUserAttributes = import('$lib/server/db/schema/index').User; // formerly `UserAttributes`
 		type DatabaseSessionAttributes = {
 			access_token: string
 			refresh_token: string | null
