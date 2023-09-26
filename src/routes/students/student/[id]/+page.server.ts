@@ -8,9 +8,14 @@ import { LuciaError } from "lucia";
 
 export const load: PageServerLoad = async (event) => {
   const userId = event.params.id;
+  if(event.locals.user?.id === userId) 
+    return {
+      student: event.locals.user
+    }
   const data = await db.query.user.findFirst({
     where: eq(user.id, userId)
   })
+  console.log("RUNNING")
   return {
     student: data ?? null
   }
@@ -18,21 +23,18 @@ export const load: PageServerLoad = async (event) => {
 
 
 export const actions = {
-  default: async ({ cookies, params, request, locals }) => {
+  default: async ({ params, request, locals }) => {
     const data = await request.formData();
     const userId = params.id;
     const name = data.get('name');
     const bio = data.get('bio');
-    const email = data.get('email-address');
     const contact = data.get('contact-number');
     console.log("NAME", name);
     console.log("BIO", bio);
-    console.log("EMAIL", email);
     console.log("CONTACT", contact);
     try {
       const res = await auth.updateUserAttributes(userId, {
         name: name?.toString(),
-        email: email?.toString(),
         phone_number: contact?.toString(),
         bio: bio?.toString(),
       });
