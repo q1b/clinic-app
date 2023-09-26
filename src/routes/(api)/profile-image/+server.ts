@@ -12,7 +12,6 @@ export const POST:RequestHandler = (async ({ request, locals }) => {
   return new Response(JSON.stringify({ message: "Thing deleted" }));
 }) satisfies RequestHandler;
 
-
 export const DELETE = (async ({ request }) => {
   const publicId = await request.json();
   await cloudinary.uploader.destroy(publicId.id as string);

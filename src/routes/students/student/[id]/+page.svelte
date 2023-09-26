@@ -39,7 +39,10 @@
 		}
 
 		console.log('Request to Database has been sended!', res);
-		if (data.student) data.student.image = res.url;
+		if (data.student && data.user) {
+			data.student.image = res.url;
+			data.user.image = res.url;
+		}
 		imageState = 'Syncing';
 		await fetch('/profile-image', {
 			method: 'POST',
