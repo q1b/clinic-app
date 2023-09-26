@@ -88,7 +88,12 @@
 			</div>
 		{/if}
 	</div>
-	<form method="POST" use:enhance>
+	<form
+		method="POST"
+		use:enhance={() => {
+			return ({ update }) => update({ reset: false });
+		}}
+	>
 		<div class="flex flex-col mb-4">
 			<label for="name" class="block text-sm font-medium leading-6 text-gray-900"> Name </label>
 			<div class="mt-2">
@@ -97,7 +102,7 @@
 					name="name"
 					id="name"
 					autocomplete="name"
-					class="block w-full py-1.5 text-gray-900 shadow-sm"
+					class="block w-full py-1.5 text-gray-900 shadow-sm bg-slate-500/5 border-slate-400 focus:bg-white"
 					value={data.student?.name}
 					readonly={!isActiveUser}
 				/>
@@ -110,7 +115,7 @@
 					name="bio"
 					id="bio"
 					placeholder="Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente inventore, rerum ipsum et quia nisi odit quod, quaerat dolorum at deleniti sed ea qui iusto tempore. Ducimus suscipit nihil nisi?"
-					class="block w-full py-1.5 text-gray-900 shadow-sm"
+					class="block w-full py-1.5 text-gray-900 shadow-sm bg-slate-500/5 border-slate-400 focus:bg-white"
 					value={data.student?.bio}
 					readonly={!isActiveUser}
 				/>
@@ -127,7 +132,7 @@
 						name="contact-number"
 						id="contact-number"
 						autocomplete="tel-national"
-						class="block w-full py-1.5 text-gray-900 shadow-sm"
+						class="block w-full py-1.5 text-gray-900 shadow-sm bg-slate-500/5 border-slate-400 focus:bg-white"
 						readonly={!isActiveUser}
 						value={data.student?.phone_number}
 					/>
@@ -143,16 +148,9 @@
 				Email Address
 			</label>
 			<div class="mt-2">
-				<input
-					type="text"
-					name="email-address"
-					id="email-address"
-					autocomplete="email"
-					tabindex="-1"
-					class="block read-only:text-gray-700 read-only:bg-slate-50 w-full py-1.5 text-gray-900 shadow-sm"
-					value={data.student?.email}
-					readonly={true}
-				/>
+				<div class="form-input text-slate-800 bg-slate-100 border-slate-400">
+					{data.student?.email}
+				</div>
 			</div>
 		</div>
 		{#if isActiveUser}
