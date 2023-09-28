@@ -1,5 +1,6 @@
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import type { ClassValue } from 'clsx';
+import { clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 import { cubicOut } from "svelte/easing";
 import type { TransitionConfig } from "svelte/transition";
 import {
@@ -134,4 +135,16 @@ const uploadFile = async (file: File): Promise<string | undefined> => {
         console.error(err);
         return undefined;
     }
+}
+
+export function removeValue<T>(source: T[], target: T): T[] {
+	const index = source.indexOf(target);
+	if (index !== -1) {
+		source.splice(index, 1);
+	}
+	return source;
+}
+
+export function hasValue<T>(source: undefined | T | T[], target: T): boolean {
+	return (!Array.isArray(source) && source === target) || (Array.isArray(source) && source?.includes(target));
 }

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { uploadImage, type InputChangeEvent } from '$lib/utils';
+	import { uploadImage, type InputChangeEvent } from '$lib/helpers/utils';
 	import { Loader2Icon, UploadIcon } from 'lucide-svelte';
 	import type { ActionData, PageData } from './$types';
 

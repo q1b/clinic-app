@@ -2,8 +2,21 @@ import { dev } from "$app/environment";
 import { auth, googleAuth } from "$lib/server/lucia";
 import { fail, redirect } from "@sveltejs/kit";
 import type { Actions } from './$types';
+import { Temporal } from "@js-temporal/polyfill";
 
 export const actions: Actions = {
+  dialog: async ({ request }) => {
+    const formData = await request.formData();
+    const [year,month,day] = formData.get('on')?.toString().split('-').map((a) => +a);
+    const [hour,minute] = formData.get('start-at')?.toString().split(':').map((a) => +a);
+    const duration = formData.get('duration');
+    const startAt = new Temporal.PlainDateTime(year,month,day,hour,minute);
+    // const endAt = new Temporal.Duration(0,0,0,0,0,duration);
+    const endAt = startAt.add({
+      minutes: +duration
+    });
+    console.log(startAt.toString(),endAt.toString())
+  },
   logout: async (event) => {
     const session = await event.locals.auth.validate();
     if (!session) throw fail(401);

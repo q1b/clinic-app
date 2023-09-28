@@ -1,15 +1,17 @@
 <script lang="ts">
-  	import type { Temporal } from '@js-temporal/polyfill';
+	import type { Temporal } from '@js-temporal/polyfill';
 	import DatePicker from '$lib/modules/date-picker.svelte';
 	import TimePicker from '$lib/modules/time-picker.svelte';
 	let date: Temporal.PlainDate;
 	let startAt: Temporal.PlainTime;
 	let duration: number;
 </script>
-<div class="p-6 w-max flex gap-4">
+
+<div class="w-max flex gap-4 flex-col">
 	<DatePicker bind:selected={date} />
 	<div class="flex flex-col">
 		<TimePicker bind:selected={startAt} bind:duration />
+
 		<div class="flex justify-between">
 			<div />
 			<button

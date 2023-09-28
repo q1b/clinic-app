@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cn } from '$lib/utils';
+	import { cn } from '$lib/helpers/utils';
 	import { Temporal } from '@js-temporal/polyfill';
 
 	export let selected: Temporal.PlainTime;
@@ -7,7 +7,6 @@
 
 	let morning = true;
 	const durations = [30, 45, 60] as const;
-
 
 	let times = [] as Temporal.PlainTime[];
 	let startTime = new Temporal.PlainTime(morning ? 6 : 12, 0, 0);
@@ -53,7 +52,7 @@
 			Evening
 		</button>
 	</div>
-	<div class="grid grid-cols-4 gap-1.5 p-1 shadow rounded-md">
+	<div class="grid grid-cols-4 gap-1.5 p-1 shadow rounded-md w-max">
 		{#each times as time}
 			<button
 				on:click={() => (selected = time)}
