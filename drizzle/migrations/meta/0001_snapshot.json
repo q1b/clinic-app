@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "83c43559-c4d2-44f1-a735-0c73c34ff680",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "dfca8751-b709-4e85-bad2-60a1d52abbdc",
+  "prevId": "83c43559-c4d2-44f1-a735-0c73c34ff680",
   "tables": {
     "appointment": {
       "name": "appointment",
@@ -12,6 +12,13 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
+          "autoincrement": false
+        },
+        "date": {
+          "name": "date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "start_at": {

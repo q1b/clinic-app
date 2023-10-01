@@ -32,7 +32,7 @@ const config = {
 		}
 	},
 	plugins: [
-		require('@tailwindcss/forms'),
+		require("@tailwindcss/forms")
 	]
 };
 

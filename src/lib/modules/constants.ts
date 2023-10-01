@@ -1,9 +1,9 @@
 export const days = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Friday",
-  "Thursday",
-  "Saturday",
+  "sunday",
+  "monday",
+  "tuesday",
+  "wednesday",
+  "friday",
+  "thursday",
+  "saturday",
 ]

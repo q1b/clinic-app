@@ -2,6 +2,7 @@ import * as dotenv from "dotenv";
 import { migrate } from "drizzle-orm/libsql/migrator";
 import { drizzle } from "drizzle-orm/libsql";
 import { createClient } from "@libsql/client";
+import { appointment } from "../src/lib/server/db/schema"
 dotenv.config();
 
 export const client = createClient({

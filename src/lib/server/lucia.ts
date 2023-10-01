@@ -24,11 +24,9 @@ export const auth = lucia({
     })
   },
   getSessionAttributes: (session) => {
-    // console.log("From Session Attributes Session", session)
     return session
   },
   getUserAttributes(user) {
-    // console.log("From User Attributes ", user)
     return user
   },
   // ...

@@ -4,12 +4,15 @@ import { auth } from "$lib/server/lucia";
 
 export const POST:RequestHandler = (async ({ request, locals }) => {
   const { userId, url } = await request.json();
-  const res = await auth.updateUserAttributes(userId,{
-    image: url
-  })
-  locals.auth.invalidate()
-  console.log( "Database is Updated", res )
-  return new Response(JSON.stringify({ message: "Thing deleted" }));
+  try {
+    await auth.updateUserAttributes(userId,{
+      image: url
+    })
+    locals.auth.invalidate()
+    return new Response(JSON.stringify({ message: "Image URL is Updated" }));
+  } catch (error) {
+    return new Response(JSON.stringify({ message: "Image URL is Failed", error:true }));
+  }
 }) satisfies RequestHandler;
 
 export const DELETE = (async ({ request }) => {

@@ -1,29 +1,12 @@
 import { relations } from 'drizzle-orm';
-import { text, sqliteTable } from 'drizzle-orm/sqlite-core';
+import { text, sqliteTable, integer  } from 'drizzle-orm/sqlite-core';
+import { createId } from '@paralleldrive/cuid2';
 
-export const user = sqliteTable('user', {
-  id: text('id').primaryKey(),
-  // other user attributes
-  // username: text('username'),
-  name: text('name'),
-  email: text('email'),
-  image: text('image'),
-  phone_number: text('phone_number'),
-  bio: text('bio').default('')
-});
-
-export type User = typeof user.$inferSelect; // return type when queried
-// export type NewUser = typeof user.$inferInsert; // insert type
-
-export const userRelations = relations(user, ({ many }) => ({
-  keys: many(key),
-}));
+const getId = () => text('id').primaryKey().$defaultFn(() => createId());
 
 export const key = sqliteTable('key', {
-  id: text('id').primaryKey(),
-  userId: text('user_id', {
-    length: 15,
-  }).notNull()
+  id: text('id').primaryKey(), // google:userId 
+  userId: text('user_id').notNull()
     .references(() => user.id),
   hashedPassword: text('hashed_password'),
 });
@@ -31,6 +14,78 @@ export const key = sqliteTable('key', {
 export const keyRelations = relations(key, ({ one }) => ({
   user: one(user, {
     fields: [key.userId],
+    references: [user.id]
+  })
+}))
+
+export const user = sqliteTable('user', {
+  id: text('id').primaryKey(),
+  name: text('name'),
+  email: text('email'),
+  image: text('image'),
+  phone_number: text('phone_number'),
+  phone_number_verified: integer('phone_number_verified',{mode:'boolean'}).default(false),
+  bio: text('bio').default('')
+});
+
+// export type NewUser = typeof user.$inferInsert; // insert type
+export type User = typeof user.$inferSelect; // return type when queried
+
+export const userRelations = relations(user, ({ one,many }) => ({
+  osteopath: one(osteopath, {
+    fields: [user.id],
+    references: [osteopath.userId],
+  }),
+  keys: many(key),
+}));
+
+export const osteopath = sqliteTable('osteopath', {
+  id: getId(),
+  userId: text('user_id').notNull().references(() => user.id),
+})
+
+export const osteopathRelations = relations(osteopath, ({ one,many }) => ({
+  user: one(user, {
+    fields: [osteopath.userId],
     references: [user.id],
   }),
+  appointments: many(appointment),
+  availability: many(availability)
+}))
+
+export const availability = sqliteTable('availability', {
+  id: getId(),
+  day: text('day', { enum: [ "sunday", "monday", "tuesday", "wednesday", "friday", "thursday", "saturday" ]}),
+  startTime: text('start_time', { mode: 'text' }),
+  endTime: text('end_time', { mode: 'text' }),
+  osteopathId: text('osteopath_id').notNull()
+    .references(() => osteopath.id),
+})
+
+export const availabilityRelations = relations(availability, ({ one }) => ({
+  osteopath: one(osteopath, {
+    fields: [availability.osteopathId],
+    references: [osteopath.id]
+  })
+}))
+
+export const appointment = sqliteTable('appointment', {
+  id: getId(),
+  date: text('date'),
+  startAt: text('start_at'),
+  duration: text('duration', { enum: ['30','45','60'] }).default('30'),
+  userId: text('user_id').references(() => user.id),
+  osteopathId: text('osteopath_id').notNull()
+    .references(() => osteopath.id),
+})
+
+export const appointmentRelations = relations(appointment, ({ one }) => ({
+  user: one(user, {
+    fields: [appointment.userId],
+    references: [user.id],
+  }),
+  osteopath: one(osteopath, {
+    fields: [appointment.osteopathId],
+    references: [osteopath.id],
+  })
 }))

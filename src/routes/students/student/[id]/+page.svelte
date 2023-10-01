@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { uploadImage, type InputChangeEvent } from '$lib/helpers/utils';
-	import { Loader2Icon, UploadIcon } from 'lucide-svelte';
+	import { Loader2Icon, UploadIcon, Wand2Icon } from 'lucide-svelte';
 	import type { ActionData, PageData } from './$types';
 
 	export let data: PageData;
 	$: isActiveUser = data.student?.id === data.user?.id;
 	export let form: ActionData;
-
 	let imageState: 'Removing' | 'Syncing' | 'Uploading' | 'idle' = 'idle';
 
 	async function handleImageUpload(e: InputChangeEvent) {
@@ -51,6 +50,7 @@
 		});
 		imageState = 'idle';
 	}
+	let loading = false;
 </script>
 
 <svelte:head>
@@ -94,7 +94,11 @@
 	<form
 		method="POST"
 		use:enhance={() => {
-			return ({ update }) => update({ reset: false });
+			loading = true;
+			return async ({ update }) => {
+				await update({ reset: false });
+				loading = false;
+			};
 		}}
 	>
 		<div class="flex flex-col mb-4">
@@ -158,9 +162,17 @@
 		</div>
 		{#if isActiveUser}
 			<div class="mt-8">
-				<button type="submit" class="px-2 py-1 disabled:bg-slate-300 bg-slate-500 text-white"
-					>Update</button
+				<button
+					type="submit"
+					class="flex items-center gap-x-2 form-input disabled:bg-slate-300 bg-blue-500 text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 				>
+					{#if loading}
+						<Loader2Icon class="animate-spin" />
+					{:else}
+						<Wand2Icon class="" />
+					{/if}
+					<span>Update</span>
+				</button>
 			</div>
 		{/if}
 	</form>
