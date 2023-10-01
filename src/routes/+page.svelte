@@ -9,17 +9,6 @@
 		(appointment) => appointment.osteopath.user.id !== data.user?.id
 	);
 	$: bydates = groupBy(appointments ?? [], (appointment) => appointment.date);
-
-	const getFormattedTime = (hour: number, minute: number) => {
-		try {
-			return new Temporal.PlainTime(hour, minute).toLocaleString('en-us', {
-				hour: '2-digit',
-				minute: '2-digit'
-			});
-		} catch (error) {
-			return undefined;
-		}
-	};
 </script>
 
 <div class="w-full flex flex-row gap-x-4 overflow-x-scroll mb-10 mt-3">
@@ -53,7 +42,12 @@
 						{@const name = osteopath.user.name}
 						<li class="flex items-center gap-x-2 w-full justify-between">
 							<div>
-								<span>{getFormattedTime(hour, minute)}</span>
+								<span
+									>{new Temporal.PlainTime(hour, minute).toLocaleString('en-us', {
+										hour: '2-digit',
+										minute: '2-digit'
+									})}</span
+								>
 								<span>
 									{name}
 								</span>
