@@ -13,7 +13,7 @@
 	import { RadioGroup, RadioGroupItem } from '$lib/components/ui/radio-group';
 	import { Temporal } from '@js-temporal/polyfill';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index';
-	import { ProgressBar } from '@prgm/sveltekit-progress-bar';
+	// import { ProgressBar } from '@prgm/sveltekit-progress-bar';
 	import { isOsteopath } from '$lib/helpers/utils';
 
 	let loading = false;
@@ -27,7 +27,7 @@
 	<title>Home Page</title>
 </svelte:head>
 
-<ProgressBar class="text-green-500" />
+<!-- <ProgressBar class="text-green-500" /> -->
 
 <header class="w-full max-w-sm bg-white px-3 py-4 flex justify-between items-center">
 	<div id="logo" class="flex items-center gap-x-2 text-slate-700">
