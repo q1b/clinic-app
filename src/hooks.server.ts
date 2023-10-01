@@ -7,5 +7,9 @@ export const handle: Handle = async ({ event, resolve }) => {
   event.locals.auth = lucia;
   event.locals.session = await lucia.validate();
   event.locals.user = event.locals.session?.user ?? null;
-  return await resolve(event);
+  try {
+    return await resolve(event);
+  } catch (error) {
+    return new Response(`Server Error ${error}`)
+  }
 };
