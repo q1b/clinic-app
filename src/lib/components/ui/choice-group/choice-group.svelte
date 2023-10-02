@@ -23,7 +23,7 @@
 			previous: toggle
 		});
 
-	setContext('radio-group', { disabled, defaultValue, init });
+	setContext('choice-group', { disabled, defaultValue, init });
 
 	function toggle(index: number) {
 		focus(index);

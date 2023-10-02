@@ -3,14 +3,14 @@
 	import { HomeIcon, LogOutIcon, MenuIcon, PlusIcon } from 'lucide-svelte';
 	import Logo from '$lib/components/ui/logo.svelte';
 	import Google from '$lib/components/ui/icons/google.svelte';
-	import Button from '$lib/components/ui/button/button.svelte';
+	import Button from '$lib/components/ui/box-button/button.svelte';
 	import { enhance } from '$app/forms';
 	import { CheckIcon, Loader2Icon } from 'lucide-svelte';
 	import type { LayoutData } from './$types';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	export let data: LayoutData;
-	import { RadioGroup, RadioGroupItem } from '$lib/components/ui/radio-group';
+	import { ChoiceGroup, ChoiceGroupItem } from '$lib/components/ui/choice-group';
 	import { Temporal } from '@js-temporal/polyfill';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index';
 	import { ProgressBar } from '@prgm/sveltekit-progress-bar';
@@ -171,24 +171,24 @@
 			</div>
 			<div class="flex flex-col mb-6">
 				<h4 class="">Duration</h4>
-				<RadioGroup
+				<ChoiceGroup
 					defaultValue="30"
 					class="inline-flex gap-x-2 w-full mt-2"
 					on:valueChange={({ detail: newValue }) => (value = newValue)}
 				>
 					<div class="flex items-center space-x-2">
-						<RadioGroupItem name="duration" value="30" id="r1" />
+						<ChoiceGroupItem name="duration" value="30" id="r1" />
 						<label aria-hidden="true" class="hidden" for="r1">30 minutes</label>
 					</div>
 					<div class="flex items-center space-x-2">
-						<RadioGroupItem name="duration" value="45" id="r2" />
+						<ChoiceGroupItem name="duration" value="45" id="r2" />
 						<label aria-hidden="true" class="hidden" for="r2">45 minutes</label>
 					</div>
 					<div class="flex items-center space-x-2">
-						<RadioGroupItem name="duration" value="60" id="r3" />
+						<ChoiceGroupItem name="duration" value="60" id="r3" />
 						<label aria-hidden="true" class="hidden" for="r3">60 minutes</label>
 					</div>
-				</RadioGroup>
+				</ChoiceGroup>
 			</div>
 			<div class="inline-flex gap-x-4">
 				<button

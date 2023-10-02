@@ -9,7 +9,7 @@
 	export let value: string;
 	export let id: string | undefined = undefined;
 	export let disabled: boolean = false;
-	export let name: string = 'radio-group-items';
+	export let name: string = 'choice-group-items';
 	let initResult: InitResult = new InitResult();
 	let checkedStore: Writable<boolean> = writable(false);
 	let {
@@ -17,7 +17,7 @@
 		defaultValue,
 		init
 	}: { disabled: boolean; defaultValue: string; init: InitFunctionType } = getContext(
-		'radio-group'
+		'choice-group'
 	);
 
 	disabled = disabled || allDisabled;
