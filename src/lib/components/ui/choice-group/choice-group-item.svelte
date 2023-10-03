@@ -36,7 +36,7 @@
 		type="button"
 		role="radio"
 		class={cn(
-			'form-input focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+			'form-input rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
 			className,
 			$checkedStore ? 'bg-blue-500 text-white' : 'bg-white'
 		)}

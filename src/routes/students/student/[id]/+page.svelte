@@ -1,9 +1,19 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { uploadImage, type InputChangeEvent } from '$lib/helpers/utils';
-	import { Loader2Icon, UploadIcon, Wand2Icon } from 'lucide-svelte';
+	import {
+		Loader2Icon,
+		LucideTextCursor,
+		MousePointer2Icon,
+		MousePointerIcon,
+		UploadIcon,
+		Wand2Icon
+	} from 'lucide-svelte';
 	import type { ActionData, PageData } from './$types';
-
+	import Button from '$lib/components/ui/button/button.svelte';
+	import Label from '$lib/components/ui/label/label.svelte';
+	import Input from '$lib/components/ui/input/input.svelte';
+	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 	export let data: PageData;
 	$: isActiveUser = data.student?.id === data.user?.id;
 	export let form: ActionData;
@@ -67,7 +77,7 @@
 	</p>
 {/if}
 
-<div class="pt-12 px-4 pb-6">
+<div class="pt-12 px-4 pb-6 w-full">
 	<div class="flex flex-col items-center justify-center gap-y-3 mb-12">
 		<img
 			class="w-32 h-32 rounded-full"
@@ -77,9 +87,12 @@
 		/>
 		{#if isActiveUser}
 			<div class="flex items-center justify-center relative">
-				<label class="px-2 py-1 border flex items-center gap-x-2" for="file-to-upload">
+				<Label
+					class="px-2 py-1 border rounded-md hover:bg-slate-100 cursor-pointer flex items-center gap-x-2"
+					for="file-to-upload"
+				>
 					<UploadIcon class="p-px" /> Upload Image
-				</label>
+				</Label>
 				<input
 					name="image"
 					id="file-to-upload"
@@ -102,77 +115,83 @@
 		}}
 	>
 		<div class="flex flex-col mb-4">
-			<label for="name" class="block text-sm font-medium leading-6 text-gray-900"> Name </label>
+			<Label for="name" class="block text-sm font-medium leading-6 text-gray-900">Name</Label>
 			<div class="mt-2">
-				<input
-					type="text"
-					name="name"
-					id="name"
-					autocomplete="name"
-					class="block w-full py-1.5 text-gray-900 shadow-sm bg-slate-500/5 border-slate-400 focus:bg-white"
-					value={data.student?.name}
-					readonly={!isActiveUser}
-				/>
+				{#if isActiveUser}
+					<Input type="text" name="name" id="name" autocomplete="name" value={data.student?.name} />
+				{:else}
+					<p class="text-xl -mt-1">
+						{data.student?.name}
+					</p>
+				{/if}
 			</div>
 		</div>
 		<div class="flex flex-col mb-4">
-			<label for="bio" class="block text-sm font-medium leading-6 text-gray-900"> Bio </label>
+			<Label for="bio" class="block text-sm font-medium leading-6 text-gray-900">Bio</Label>
 			<div class="mt-2">
-				<textarea
-					name="bio"
-					id="bio"
-					placeholder="Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente inventore, rerum ipsum et quia nisi odit quod, quaerat dolorum at deleniti sed ea qui iusto tempore. Ducimus suscipit nihil nisi?"
-					class="block w-full py-1.5 text-gray-900 shadow-sm bg-slate-500/5 border-slate-400 focus:bg-white"
-					value={data.student?.bio}
-					readonly={!isActiveUser}
-				/>
+				{#if isActiveUser}
+					<Textarea
+						name="bio"
+						id="bio"
+						placeholder="Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente inventore, rerum ipsum et quia nisi odit quod, quaerat dolorum at deleniti sed ea qui iusto tempore. Ducimus suscipit nihil nisi?"
+						value={data.student?.bio}
+					/>
+				{:else}
+					<p>
+						{#if !!!data.student?.bio}
+							---
+						{/if}
+						{data.student?.bio}
+					</p>
+				{/if}
 			</div>
 		</div>
 		{#if isActiveUser || !!data.student?.phone_number}
 			<div class="flex flex-col mb-4">
-				<label for="contact-number" class="block text-sm font-medium leading-6 text-gray-900">
+				<Label for="contact-number" class="block text-sm font-medium leading-6 text-gray-900">
 					Contact Number
-				</label>
+				</Label>
 				<div class="mt-2 flex flex-col gap-y-1">
-					<input
-						type="text"
-						name="contact-number"
-						id="contact-number"
-						autocomplete="tel-national"
-						class="block w-full py-1.5 text-gray-900 shadow-sm bg-slate-500/5 border-slate-400 focus:bg-white"
-						readonly={!isActiveUser}
-						value={data.student?.phone_number}
-					/>
+					{#if isActiveUser}
+						<Input
+							type="text"
+							name="contact-number"
+							id="contact-number"
+							autocomplete="tel-national"
+							class="block w-full py-1.5 text-gray-900 shadow-sm bg-slate-500/5 border-slate-400 focus:bg-white"
+							value={data.student?.phone_number}
+						/>
+					{:else}
+						<p>
+							{data.student?.phone_number}
+						</p>
+					{/if}
 					<!-- {#if !isValidContact}
 						<p class="text-sm text-rose-600">Enter a Valid Phone Number</p>
 					{/if} -->
 				</div>
 			</div>
 		{/if}
-
-		<div class="flex flex-col mb-4">
-			<label for="email-address" class="block text-sm font-medium leading-6 text-gray-900">
+		<div class="flex flex-col mb-4 w-full">
+			<Label for="email-address" class="block text-sm font-medium leading-6 text-gray-900">
 				Email Address
-			</label>
-			<div class="mt-2">
-				<div class="form-input text-slate-800 bg-slate-100 border-slate-400">
+			</Label>
+			<div class="grow overflow-x-auto flex">
+				<div class="text-xl">
 					{data.student?.email}
 				</div>
 			</div>
 		</div>
 		{#if isActiveUser}
 			<div class="mt-8">
-				<button
-					type="submit"
-					class="flex items-center gap-x-2 form-input disabled:bg-slate-300 bg-blue-500 text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-				>
+				<Button type="submit" class="gap-x-2">
+					<span>Update</span>
 					{#if loading}
 						<Loader2Icon class="animate-spin" />
 					{:else}
-						<Wand2Icon class="" />
+						<MousePointerIcon class="w-4 h-4" />
 					{/if}
-					<span>Update</span>
-				</button>
+				</Button>
 			</div>
 		{/if}
 	</form>

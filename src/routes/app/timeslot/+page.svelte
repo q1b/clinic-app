@@ -14,7 +14,7 @@
 
 		<div class="flex justify-between">
 			<div />
-			<button
+			<Button
 				on:click={() => {
 					console.log(startAt);
 					console.log(date);
@@ -35,7 +35,7 @@
 						<path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
 					</svg>
 				</span>
-			</button>
+			</Button>
 		</div>
 	</div>
 </div>

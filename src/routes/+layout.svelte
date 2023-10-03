@@ -3,7 +3,7 @@
 	import { HomeIcon, LogOutIcon, MenuIcon, PlusIcon } from 'lucide-svelte';
 	import Logo from '$lib/components/ui/logo.svelte';
 	import Google from '$lib/components/ui/icons/google.svelte';
-	import Button from '$lib/components/ui/box-button/button.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 	import { enhance } from '$app/forms';
 	import { CheckIcon, Loader2Icon } from 'lucide-svelte';
 	import type { LayoutData } from './$types';
@@ -15,7 +15,9 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index';
 	import { ProgressBar } from '@prgm/sveltekit-progress-bar';
 	import { isOsteopath } from '$lib/helpers/utils';
-
+	import { Toaster } from 'svelte-sonner';
+	import Input from '$lib/components/ui/input/input.svelte';
+	import Label from '$lib/components/ui/label/label.svelte';
 	let loading = false;
 	const today = Temporal.Now.plainDateISO();
 	let dialogEl: HTMLDialogElement;
@@ -27,6 +29,7 @@
 	<title>Home Page</title>
 </svelte:head>
 
+<Toaster />
 <ProgressBar class="text-green-500" />
 
 <header class="w-full max-w-sm bg-white px-3 py-4 flex justify-between items-center">
@@ -46,8 +49,14 @@
 				<Logo size={48} />
 			{/if}
 		{:else}
-			<Button on:click={() => goto('/')} disabled={loading} type="submit" class="text-base">
-				<HomeIcon />
+			<Button
+				on:click={() => goto('/')}
+				variant="outline"
+				disabled={loading}
+				type="submit"
+				class="text-base justify-start gap-x-2"
+			>
+				<HomeIcon class="w-5 h-5" />
 				Home
 			</Button>
 		{/if}
@@ -60,7 +69,7 @@
 				}}
 			>
 				<DropdownMenu.Trigger asChild let:builder>
-					<Button builders={[builder]} class="px-1.5">
+					<Button builders={[builder]} size="icon" variant="outline">
 						<MenuIcon />
 					</Button>
 				</DropdownMenu.Trigger>
@@ -77,11 +86,13 @@
 									loading = false;
 								};
 							}}
+							class="w-full"
 						>
-							<button
+							<Button
 								disabled={loading}
+								class="w-full items-center justify-start gap-x-2"
+								variant="destructive"
 								type="submit"
-								class="text-base w-full hover:bg-rose-200 inline-flex gap-x-2 p-1"
 							>
 								{#if loading}
 									<Loader2Icon />
@@ -89,7 +100,7 @@
 									<LogOutIcon />
 								{/if}
 								Logout
-							</button>
+							</Button>
 						</form>
 					</DropdownMenu.Item>
 				</DropdownMenu.Content>
@@ -107,7 +118,7 @@
 					};
 				}}
 			>
-				<Button disabled={loading} type="submit" class="text-base">
+				<Button disabled={loading} type="submit" class="gap-x-2 px-3" variant="outline">
 					{#if loading}
 						<Loader2Icon />
 					{:else}
@@ -127,7 +138,7 @@
 </main>
 
 {#if isOsteopath(data.user?.email)}
-	<dialog bind:this={dialogEl} class="p-4 w-full max-w-xs">
+	<dialog bind:this={dialogEl} class="p-4 w-full max-w-xs rounded-md shadow-md">
 		<form
 			method="post"
 			action="/?/dialog"
@@ -142,9 +153,9 @@
 			}}
 		>
 			<div class="flex flex-col mb-4">
-				<label for="on"> Date </label>
+				<Label for="on">Date</Label>
 				<div class="mt-2">
-					<input
+					<Input
 						class="w-full"
 						type="date"
 						name="on"
@@ -156,9 +167,9 @@
 				</div>
 			</div>
 			<div class="flex flex-col mb-4">
-				<label for="start-at"> Start At </label>
+				<Label for="start-at">Start At</Label>
 				<div class="mt-2">
-					<input
+					<Input
 						class="w-full invalid:text-rose-500"
 						type="time"
 						name="start-at"
@@ -170,7 +181,7 @@
 				</div>
 			</div>
 			<div class="flex flex-col mb-6">
-				<h4 class="">Duration</h4>
+				<h4 class="text-sm font-semibold">Duration</h4>
 				<ChoiceGroup
 					defaultValue="30"
 					class="inline-flex gap-x-2 w-full mt-2"
@@ -191,19 +202,20 @@
 				</ChoiceGroup>
 			</div>
 			<div class="inline-flex gap-x-4">
-				<button
+				<Button
 					disabled={loadingTimeslotAction}
-					class="form-input border-transparent bg-slate-100"
 					value="cancel"
+					variant="secondary"
 					formmethod="dialog"
 				>
 					Cancel
-				</button>
-				<button
+				</Button>
+				<Button
 					type="submit"
 					{value}
 					disabled={loadingTimeslotAction}
-					class="inline-flex form-input items-center bg-indigo-600 text-white gap-x-2"
+					variant="default"
+					class="gap-x-2"
 				>
 					{#if loadingTimeslotAction}
 						<Loader2Icon class="animate-spin" />
@@ -211,14 +223,15 @@
 						<CheckIcon />
 					{/if}
 					Submit
-				</button>
+				</Button>
 			</div>
 		</form>
 	</dialog>
-	<button
-		class="flex items-center pl-2 pr-3.5 py-1 border border-slate-400 hover:bg-slate-100 cursor-pointer active:bg-slate-200/80 transition-colors fixed bottom-10 right-6 text-xl gap-x-2 z-10 bg-slate-50/20 backdrop-blur-sm"
+	<Button
+		class="fixed bottom-10 right-6 gap-x-2 pl-2"
+		variant="outline"
 		on:click={() => dialogEl.showModal()}
 	>
-		<PlusIcon class="w-8 h-8 p-0.5" /> Create Timeslot
-	</button>
+		<PlusIcon class="w-8 h-8 p-0.5" /> <span class="text-lg">Create Timeslot</span>
+	</Button>
 {/if}

@@ -1,8 +1,10 @@
 <script lang="ts">
+	import Button from '$lib/components/ui/button/button.svelte';
 	import groupBy from 'just-group-by';
 	import type { PageData } from './$types';
 	import { Temporal } from '@js-temporal/polyfill';
 	import Dash from '$lib/components/Dash.svelte';
+	import { ArrowRightIcon } from 'lucide-svelte';
 	export let data: PageData;
 
 	$: appointments = data.appointments.filter(
@@ -15,15 +17,17 @@
 	{#each data.osteopaths as osteopath}
 		<a
 			href={`/osteopath/${osteopath.id}`}
-			class="flex cursor-pointer flex-col items-start shrink-0 w-36 gap-y-1 sm:gap-y-2 p-2"
+			class="flex cursor-pointer flex-col shrink-0 w-40 gap-y-1 p-2 bg-card border-border border-2 rounded-md"
 		>
-			<img
-				class="w-32 h-32"
-				src={osteopath.user.image}
-				alt={`${osteopath.user.name} Profile Image`}
-			/>
-			<h4 class="text-base sm:text-lg md:text-xl w-max font-bold">{osteopath.user.name}</h4>
-			<p class="line-clamp-3 text-sm sm:text-base">{osteopath.user.bio}</p>
+			<div class="w-full flex items-center justify-center mb-1">
+				<img
+					class="w-full aspect-square rounded-md"
+					src={osteopath.user.image}
+					alt={`${osteopath.user.name} Profile Image`}
+				/>
+			</div>
+			<h4 class="text-base w-max font-bold">{osteopath.user.name}</h4>
+			<p class="line-clamp-3 text-sm">{osteopath.user.bio}</p>
 		</a>
 	{/each}
 </div>
@@ -36,23 +40,35 @@
 					<Dash />
 					<span> {date} </span>
 				</h2>
-				<ul class="pl-1 gap-y-3">
+				<ul class="pl-1 gap-y-2 flex flex-col">
 					{#each bydates[date] as { duration, startAt, osteopath }}
 						{@const [hour, minute] = startAt?.split(':').map((v) => +v)}
 						{@const name = osteopath.user.name}
 						<li class="flex items-center gap-x-2 w-full justify-between">
-							<div>
-								<span
-									>{new Temporal.PlainTime(hour, minute).toLocaleString('en-us', {
-										hour: '2-digit',
-										minute: '2-digit'
-									})}</span
-								>
-								<span>
-									{name}
-								</span>
+							<div class="flex items-center w-full">
+								<div class="flex gap-x-1 w-full">
+									<div class="flex items-center shrink-0">
+										<span
+											>{new Temporal.PlainTime(hour, minute).toLocaleString('en-us', {
+												hour: '2-digit',
+												minute: '2-digit'
+											})}
+										</span>
+										<Dash space={4} />
+										<span class="whitespace-nowrap">
+											{duration} min
+										</span>
+									</div>
+									<div class="flex grow gap-x-1 overflow-x-auto">
+										<span class="text-muted-foreground whitespace-nowrap w-1">
+											{name}
+										</span>
+									</div>
+								</div>
 							</div>
-							<button class="bg-slate-100 px-2 py-0.5"> Book </button>
+							<Button size="sm" variant="outline" class="h-6 px-2 gap-x-1">
+								Book <ArrowRightIcon class="w-3.5 h-3.5" />
+							</Button>
 						</li>
 					{/each}
 				</ul>
