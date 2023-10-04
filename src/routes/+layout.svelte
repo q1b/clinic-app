@@ -91,7 +91,7 @@
 							<Button
 								disabled={loading}
 								class="w-full items-center justify-start gap-x-2"
-								variant="destructive"
+								variant="destructive-subtle"
 								type="submit"
 							>
 								{#if loading}

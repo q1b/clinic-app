@@ -8,7 +8,7 @@
 	import { ClockIcon, DeleteIcon, Edit3, PlusCircleIcon, SettingsIcon } from 'lucide-svelte';
 	import Dash from '$lib/components/Dash.svelte';
 	import TimePickerV2Range from '$lib/modules/time-picker-v2-range.svelte';
-	import { handleDelete } from '../../(api)/time-availability';
+	import { handleDelete } from '../../../(api)/time-availability';
 	const time = new Temporal.PlainTime(9, 12);
 	console.log(time.toString());
 	const getTimeStr = (hour: number, minute: number) => {
@@ -82,6 +82,34 @@
 						<Dash space={0} />
 						<span class="flex text-sm font-semibold items-center">{day}</span>
 					</div>
+					<div class="flex items-center gap-x-px">
+						<Popover.Root>
+							<Popover.Trigger asChild let:builder>
+								<Button builders={[builder]} size="sm-icon" variant="ghost">
+									<PlusCircleIcon size={20} />
+								</Button>
+							</Popover.Trigger>
+							<Popover.Content class="p-0 w-max flex flex-col h-[267px] rounded-lg gap-y-2">
+								<TimePickerV2Range
+									osteopathId={data.osteopath?.id}
+									{day}
+									on:load={({ detail }) => {
+										if (availability) {
+											console.log(detail, availability);
+											availability = [...availability, detail];
+											result = getGroupedByDate();
+										}
+									}}
+									method="add"
+									selected={new Temporal.PlainTime(9, 0, 0)}
+									selected2={new Temporal.PlainTime(17, 0, 0)}
+								/>
+							</Popover.Content>
+						</Popover.Root>
+						<Button size="sm-icon" variant="ghost">
+							<SettingsIcon size={20} />
+						</Button>
+					</div>
 				</div>
 				<ul class="flex flex-col gap-y-1 pl-6">
 					{#each result[day] as { startTime, endTime, id }, i}
@@ -104,6 +132,67 @@
 									<ChevronDownIcon />
 								</Button> -->
 								</div>
+								<Popover.Root>
+									<Popover.Trigger asChild let:builder>
+										<Button
+											builders={[builder]}
+											size="sm-icon"
+											class="text-blue-500 hover:bg-blue-50 hover:text-blue-500"
+											variant="ghost"
+										>
+											<Edit3 size={20} />
+										</Button>
+									</Popover.Trigger>
+									<Popover.Content class="p-0 w-max flex flex-col h-[267px] rounded-lg gap-y-2">
+										<TimePickerV2Range
+											time_availability_id={id}
+											selected={fromTimeStr(startTime)}
+											selected2={fromTimeStr(endTime)}
+											on:load={({ detail: { startTime, endTime } }) => {
+												console.log('Data', startTime, endTime);
+												if (availability) {
+													const i = availability.findIndex((o) => o.id === id);
+													availability[i].startTime = startTime;
+													availability[i].endTime = endTime;
+													availability = availability;
+													result = getGroupedByDate();
+												}
+											}}
+										/>
+									</Popover.Content>
+								</Popover.Root>
+							</div>
+							<div class="flex items-center gap-x-px">
+								<Button
+									size="sm-icon"
+									variant="ghost"
+									class="text-rose-500 hover:bg-rose-50 hover:text-rose-500"
+									on:click={async (event) => {
+										if (availability) {
+											try {
+												const index = availability?.findIndex((a) => a.id === id);
+												const res = await handleDelete({ id });
+												if (index !== -1) {
+													availability.splice(index, 1);
+												}
+												availability = availability;
+												result = getGroupedByDate();
+											} catch (error) {
+												console.log(
+													'Unable to trash the',
+													day,
+													id,
+													startTime,
+													endTime,
+													'\n',
+													error
+												);
+											}
+										}
+									}}
+								>
+									<DeleteIcon size={20} />
+								</Button>
 							</div>
 						</li>
 					{/each}

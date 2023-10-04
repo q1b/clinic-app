@@ -1,8 +1,17 @@
 <script lang="ts">
+	import Button from '$lib/components/ui/button/button.svelte';
 	import { cn } from '$lib/helpers/utils';
 	import { Temporal } from '@js-temporal/polyfill';
+	import { Loader2Icon } from 'lucide-svelte';
+	import { createEventDispatcher } from 'svelte';
+	import { handleAdd, handleUpdate } from '../../routes/(api)/time-availability';
+	// props related to API Request Specifically!
+	export let method: 'add' | 'update' = 'update';
+	export let time_availability_id: string | undefined = undefined;
+	export let osteopathId: string | undefined = undefined;
+	export let day: string | undefined = undefined;
 
-	let morning = true;
+	const dispatch = createEventDispatcher();
 
 	let times = [] as Temporal.PlainTime[];
 
@@ -25,17 +34,7 @@
 		times.push(now);
 		now = now.add({ minutes: 15 });
 	}
-	function regen(morning: boolean) {
-		startTime = new Temporal.PlainTime(morning ? 7 : 12, 0, 0);
-		endTime = new Temporal.PlainTime(morning ? 12 : 18, 0, 0);
-		now = new Temporal.PlainTime(startTime.hour, startTime.minute);
-		for (let index = 0; index < times.length; index++) {
-			times[index] = now;
-			now = now.add({ minutes: 15 });
-		}
-	}
-
-	$: regen(morning);
+	let loading = false;
 </script>
 
 <div class="grid grid-cols-4 gap-1 pt-32 overflow-y-scroll pb-1 px-1 grow h-0 place-content-center">
@@ -65,4 +64,78 @@
 			})}
 		</button>
 	{/each}
+</div>
+
+<div class="flex gap-x-2">
+	<Button class="w-full" variant="outline">Cancel</Button>
+	{#if method === 'update'}
+		<Button
+			disabled={loading}
+			on:click={async () => {
+				if (!selected2) return;
+				let reverse = selected.until(selected2).sign === 1;
+				const startTime = (reverse ? selected : selected2).toLocaleString('en-us', {
+					hour: '2-digit',
+					minute: '2-digit',
+					hour12: false
+				});
+				const endTime = (reverse ? selected2 : selected).toLocaleString('en-us', {
+					hour: '2-digit',
+					minute: '2-digit',
+					hour12: false
+				});
+				if (time_availability_id) {
+					loading = true;
+					await handleUpdate({
+						id: time_availability_id,
+						startTime,
+						endTime
+					});
+					loading = false;
+				}
+				dispatch('load', { startTime, endTime });
+			}}
+			class="w-full"
+		>
+			{#if loading}
+				<Loader2Icon class="animate-spin" />
+			{/if}
+			Update
+		</Button>
+	{:else}
+		<Button
+			disabled={loading}
+			on:click={async () => {
+				if (!selected2) return;
+				let reverse = selected.until(selected2).sign === 1;
+				const startTime = (reverse ? selected : selected2).toLocaleString('en-us', {
+					hour: '2-digit',
+					minute: '2-digit',
+					hour12: false
+				});
+				const endTime = (reverse ? selected2 : selected).toLocaleString('en-us', {
+					hour: '2-digit',
+					minute: '2-digit',
+					hour12: false
+				});
+				if (day && osteopathId) {
+					loading = true;
+					const res = await handleAdd({
+						day,
+						osteopathId,
+						startTime,
+						endTime
+					});
+					dispatch('load', res.data);
+					loading = false;
+				}
+			}}
+			class="w-full"
+		>
+			{#if loading}
+				<Loader2Icon class="animate-spin" />
+			{/if}
+			Add
+		</Button>
+	{/if}
 </div>

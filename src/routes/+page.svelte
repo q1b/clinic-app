@@ -16,7 +16,7 @@
 <div class="w-full flex flex-row gap-x-4 overflow-x-scroll mb-10 mt-3">
 	{#each data.osteopaths as osteopath}
 		<a
-			href={`/osteopath/${osteopath.id}`}
+			href={`/osteopath/${data.user?.id === osteopath.userId ? 'verified/' : '/'}${osteopath.id}`}
 			class="flex cursor-pointer flex-col shrink-0 w-40 gap-y-1 p-2 bg-card border-border border-2 rounded-md"
 		>
 			<div class="w-full flex items-center justify-center mb-1">

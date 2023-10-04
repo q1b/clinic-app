@@ -10,6 +10,8 @@ const buttonVariants = tv({
 				"bg-primary text-primary-foreground shadow hover:bg-primary/90",
 			destructive:
 				"bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+			'destructive-subtle':
+				"bg-rose-50 text-rose-500 shadow-sm shadow-rose-300/20 hover:bg-rose-100 hover:text-rose-600",
 			outline:
 				"border border-input bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground",
 			secondary:
