@@ -2,6 +2,7 @@
 	import type { Temporal } from '@js-temporal/polyfill';
 	import DatePicker from '$lib/modules/date-picker.svelte';
 	import TimePicker from '$lib/modules/time-picker.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 	let date: Temporal.PlainDate;
 	let startAt: Temporal.PlainTime;
 	let duration: number;

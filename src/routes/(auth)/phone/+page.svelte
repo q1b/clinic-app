@@ -29,26 +29,31 @@
 		<form
 			method="POST"
 			action={form?.sended ? '?/verifyCode' : '?/sendCode'}
-			class="w-full p-2 bg-white shadow-sm"
-			use:enhance={() => {
+			class="grid grid-cols-12 gap-y-2 w-full p-2 bg-white shadow-sm"
+			use:enhance={({ formData }) => {
 				loading = true;
-				return async ({ update }) => {
+				console.log(formData);
+				return async ({ update, formData }) => {
 					await update({ reset: false });
 					loading = false;
 				};
 			}}
 		>
-			<div class="flex flex-col gap-y-2 mb-2">
-				<Label for="phone_number">Phone Number</Label>
-				<Input type="tel" name="phone_number" id="phone_number" />
+			<Label class="col-span-full" for="phone_number">Phone Number</Label>
+			<div
+				class="col-span-2 w-max tabular-nums shadow-sm bg-white border border-slate-200 rounded-lg px-1.5 py-1"
+			>
+				+91
 			</div>
+			<Input class="col-span-10" type="tel" name="phone_number" id="phone_number" />
 			{#if form?.sended}
-				<div class="flex flex-col gap-y-2 mb-4">
+				<div class="col-span-full flex flex-col mt-2 gap-y-2 mb-2">
 					<Label for="verify_code">Verification Code</Label>
 					<Input type="text" name="verify_code" id="verify_code" />
 				</div>
 			{/if}
-			<Button class="items-center gap-x-2 justify-center px-3 pr-3.5">
+			<div class="col-span-2"></div>
+			<Button class="col-span-4 items-center gap-x-2 justify-center px-3 pr-3.5">
 				{#if loading}
 					<Loader2Icon class="w-4 h-4 animate-spin" />
 				{:else}

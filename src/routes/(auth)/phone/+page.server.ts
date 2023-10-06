@@ -6,6 +6,7 @@ export const actions: Actions = {
     const data = await event.request.formData()
     const phone_number = data.get('phone_number')
     if(phone_number){
+      console.log(phone_number)
       await sendVerificationCode(phone_number.toString())
     }
     return { sended: true }

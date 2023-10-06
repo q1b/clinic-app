@@ -1,4 +1,4 @@
-import { lucia } from "lucia";
+import { lucia, type User } from "lucia";
 import { sveltekit } from "lucia/middleware";
 import { dev } from "$app/environment";
 import { google } from "@lucia-auth/oauth/providers";
@@ -7,6 +7,9 @@ import upstashClient from "./kv";
 import { upstash } from "@lucia-auth/adapter-session-redis";
 import { libsql } from "@lucia-auth/adapter-sqlite";
 import { client } from "$lib/server/db";
+import TwilioClient from "twilio";
+import { TWILIO_SID, TWILIO_TOKEN, TWILIO_VERIFY_SID } from "$env/static/private";
+import { createId } from '@paralleldrive/cuid2';
 
 // default values
 export const auth = lucia({
@@ -40,10 +43,73 @@ export const googleAuth = google(auth, {
   scope: ['openid', 'email', 'profile', GOOGLE_SCOPE],
 });
 
-// export const getSession = async (event) => {
-// 	const authRequest = auth.handleRequest(event);
-// 	const session = await authRequest.validate();
-// 	return session
-// }
+export const twilioAuth = twilio(auth, {
+  sid: TWILIO_SID,
+  authToken: TWILIO_TOKEN,
+  verifySid: TWILIO_VERIFY_SID,
+});
+
+declare global {
+  // eslint-disable-next-line no-var
+  var twilio: TwilioClient.Twilio | undefined;
+}
+
+function twilio(auth:Auth, options: {
+  sid: string,
+  authToken: string,
+  verifySid: string
+}) {
+  // const twilio = TwilioClient(options.sid, options.authToken)
+  const twilio = globalThis.twilio || TwilioClient(TWILIO_SID, TWILIO_TOKEN)
+
+  if (dev) {
+    globalThis.twilio = twilio;
+  }
+  
+  return {
+    async sendVarificationCode(phoneNumber: string) {
+      return await twilio.verify.v2.services(options.verifySid).verifications.create({
+          to: phoneNumber,
+          channel: 'sms'
+      })
+    },
+    async validateCode(phoneNumber:string, code:string) {
+      let verified = false;
+
+      const verification_check = await twilio.verify.v2.services(options.verifySid).verificationChecks.create({ to: phoneNumber, code: code });
+      if (verification_check.status === "approved") verified = true;
+      const id = createId();
+      const createUser = async ({attributes}:{attributes:Omit<User,'id'| 'userId' | 'phone_number' | 'phone_number_verified'>}) => {
+        return await auth.createUser({
+          attributes: {
+            id,
+            phone_number: phoneNumber,
+            phone_number_verified: verified,
+            ...attributes,
+          },
+          key: {
+            password: null,
+            providerId: 'phone',
+            providerUserId: phoneNumber,
+          },
+          userId: id,
+        })
+      };
+      const getExistingUser = async () => {
+        try {
+          const res = await auth.getKey('phone',phoneNumber)
+          return await auth.getUser(res?.userId)
+        } catch (error) {
+          return null
+        }
+      }
+      return {
+        getExistingUser,
+        createUser,
+        verified
+      }    
+    },
+  }
+}
 
 export type Auth = typeof auth;
