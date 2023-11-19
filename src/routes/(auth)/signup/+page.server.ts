@@ -1,3 +1,5 @@
+import { twilioAuth } from '$lib/server/lucia';
+import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import type { PageServerLoad } from './$types';
 
@@ -11,25 +13,35 @@ export const actions: Actions = {
 		const fullName = form.get('full-name')!;
 		const phoneNumber = form.get('phone-number')!;
 		const password = form.get('password')!;
-		cookies.set('phone-number', phoneNumber.toString() ,{
-			path: '/'
-		})
-		cookies.set('password', password.toString() ,{
-			path: '/',
-		})
-		console.log("RUNNING")
-		return {
-			'phone-number': phoneNumber.toString(),
-			password: password.toString()
+		try {
+			const result = await twilioAuth.sendVarificationCode(`+91 ${phoneNumber.toString()}`);
+			console.log(result);
+			return {
+				status: result.status
+			}
+		} catch (error) {
+			console.log(error)
+			return fail(404,{error:true})
 		}
 	},
 	verifyOTP: async ({request, cookies}) => {
 		const form = await request.formData();
-		const otpCode = form.get('otp-code')!;
-		const phoneNumber = cookies.get('phone-number');
-		console.log(otpCode.toString(),phoneNumber)
-		return {
-			verified: true
+		const otpCode = form.get('otp-code');
+		const fullName = form.get('full-name');
+		const phoneNumber = form.get('phone-number');
+		const password = form.get('password');
+		console.log(phoneNumber, fullName, password)
+		if(otpCode === null) return fail(404,{error: 'OTP Undefined'})
+		try {
+			const { verified, createUser, getExistingUser } = await twilioAuth.validateCode(`+91 ${phoneNumber}`, otpCode.toString());
+			if(verified) console.log("VERIFIED")
+			else console.log("UNVERIFIED")
+			return {
+				verified
+			}
+		} catch (error) {
+			console.log(error)
+			return fail(404,{error:true})
 		}
 	},
 	// default: async (requestEvent) => {

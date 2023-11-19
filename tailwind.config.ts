@@ -37,9 +37,6 @@ export default {
 	},
 	plugins: [
 		plugin(function ({ addVariant, addUtilities, addBase }) {
-			addBase({
-        'button': { '-webkit-tap-highlight-color': 'transparent', userSelect: 'none' },
-      })
 			addUtilities({
 				'.tab-highlight-none': {
 					'-webkit-tap-highlight-color': 'transparent'

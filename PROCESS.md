@@ -39,4 +39,4 @@
     - created: `src/server/db/index.ts` file
       - initialize sqlite client ( using turso here, )
       - setting up drizzle
-  - setting up phone-auth for getting only valid user by-pass
+- Creating Signup / Signin Page for users

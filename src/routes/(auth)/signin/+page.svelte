@@ -9,6 +9,15 @@
 
 <div class="w-full xs:max-w-sm px-4 xs:px-2 sm:px-0">
 	{#if req === 'idle' || req === 'validating'}
+		<div class="mb-8">
+			<h2 class="text-layer-13 font-bold text-2xl mb-2">Sign in to your account</h2>
+			<p>
+				Don't have an account? <a
+					href="/signup"
+					class="text-sky-400 font-medium underline underline-offset-4">Sign up</a
+				> for free
+			</p>
+		</div>
 		<form
 			method="post"
 			use:enhance={async () => {
@@ -19,15 +28,6 @@
 				};
 			}}
 		>
-			<div class="mb-8">
-				<h2 class="text-layer-13 font-bold text-2xl mb-2">Sign in to your account</h2>
-				<p>
-					Don't have an account? <a
-						href="/signup"
-						class="text-sky-400 font-medium underline underline-offset-4">Sign up</a
-					> for free
-				</p>
-			</div>
 			<div class="mb-4">
 				<label for="phone-number" class="block text-sm font-medium leading-6 text-layer-10">
 					Phone Number
@@ -96,7 +96,8 @@
 		</form>
 	{:else}
 		<div>
-			<h2 class="text-layer-13 font-bold">OTP Status {req}</h2>
+			<h2 class="text-layer-13 font-bold">Validated {req}</h2>
+			<a class="text-sky-400 font-medium underline underline-offset-4" href="/">Go to Home</a>
 		</div>
 	{/if}
 </div>

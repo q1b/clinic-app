@@ -75,7 +75,6 @@ function twilio(auth:Auth, options: {
     },
     async validateCode(phoneNumber:string, code:string) {
       let verified = false;
-
       const verification_check = await twilio.verify.v2.services(options.verifySid).verificationChecks.create({ to: phoneNumber, code: code });
       if (verification_check.status === "approved") verified = true;
       const id = createId();
