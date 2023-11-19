@@ -1,16 +1,15 @@
 import { lucia, type User } from "lucia";
 import { sveltekit } from "lucia/middleware";
-import { dev } from "$app/environment";
 import { google } from "@lucia-auth/oauth/providers";
-import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI, GOOGLE_SCOPE } from "$env/static/private";
-import upstashClient from "./kv";
-import { upstash } from "@lucia-auth/adapter-session-redis";
 import { libsql } from "@lucia-auth/adapter-sqlite";
-import { client } from "$lib/server/db";
+import { upstash } from "@lucia-auth/adapter-session-redis";
+import { dev } from "$app/environment";
 import TwilioClient from "twilio";
-import { TWILIO_SID, TWILIO_TOKEN, TWILIO_VERIFY_SID } from "$env/static/private";
-import { createId } from '@paralleldrive/cuid2';
 import { remember } from "@epic-web/remember"
+import { client } from "$lib/server/db";
+import upstashClient from "./kv";
+import { createId } from '@paralleldrive/cuid2';
+import { TWILIO_SID, TWILIO_TOKEN, TWILIO_VERIFY_SID, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI, GOOGLE_SCOPE } from "$env/static/private";
 
 // default values
 export const auth = lucia({
