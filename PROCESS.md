@@ -1,0 +1,42 @@
+# Process Log of Building this Application
+
+- setup sveltekit
+  - purpose: Barebones template and config files which can be hard to setup by themsvelves from ground up so, sveltekit provides a cli command
+  - command: `npm create svelte@latest [project name]`
+  - changes:
+    - minimal architecture for _svelte web app_ development
+    - setup common packages which are used accross javascript ecosystem such as `prettier` and ...
+- setup CSS-Framework: `tailwindcss`
+  - command: `npx svelte-add@latest tailwindcss`
+  - changes:
+    - created: new config files postcss.config.cjs and tailwind.config.cjs in _/_
+    - created: new file app.postcss in _/src folder_
+    - modified: +layout.svelte in _/src/routes folder_, importing app.postcss file
+- customizing the design-system
+  - setup to download and add fonts
+    - downloading latest release file from Inter Github Repo
+    - unzip it, and copy _.ttf_ file from the root for me, `Mona-Sans`
+    - place them, into static folder
+  - changes:
+    - modified: tailwind.config.js, added 'Mona-Sans' in fontFamily
+    - modified: app.html, added script to preload font required files
+  - new screen breakpoint `xs`
+  - changes:
+    - modified: tailwind.config.js, added 'xs' in screens
+- good to have utilities!
+  - tailwindcss breakpoint checker added in root layout file
+  - added `cn` util in lib folder and webstorage
+- light & dark theme implementation
+  - changes:
+    - created: new svelte component theme.svelte
+- setting up header and footer component for the web-app
+- Server Architecture `/src/server`
+  - setting up `.env` file, for private variables
+  - setting key-value store, for auth-sessions
+    - created: kv.ts in server folder
+    - Initialize Redis Client, export it!
+  - setting up database
+    - created: `src/server/db/index.ts` file
+      - initialize sqlite client ( using turso here, )
+      - setting up drizzle
+  - setting up phone-auth for getting only valid user by-pass

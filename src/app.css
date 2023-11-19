@@ -1,0 +1,91 @@
+/* Write your global styles here, in PostCSS syntax */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	:root {
+		--background: 0deg 0% 100%;
+		--foreground: 222.2deg 84% 4.9%;
+		--layer-0: 0deg 0% 100%; /* Pure */
+		--layer-1: 0deg 0% 99%; /* App background */
+		--layer-2: 0deg 0% 98%; /* Subtle background */
+		--layer-3: 0deg 0% 94%; /* UI element background */
+		--layer-4: 0deg 0% 91%; /* Hovered UI element background */
+		--layer-5: 0deg 0% 88%; /* Active / Selected UI element background */
+		--layer-6: 0deg 0% 85%; /* Subtle borders and separators */
+		--layer-7: 0deg 0% 81%; /* UI element border and focus rings */
+		--layer-8: 0deg 0% 73%; /* Hovered UI element border */
+		--layer-9: 0deg 0% 55%; /* Solid backgrounds */
+		--layer-10: 0deg 0% 51%; /* Hovered solid backgrounds */
+		--layer-11: 0deg 0% 39%; /* Low-contrast text */
+		--layer-12: 0deg 0% 13%; /* High-contrast text */
+		--layer-13: 0deg 0% 1%; /* Inverted */
+
+		--blue-1: hsl(210, 100%, 99%);
+		--blue-2: hsl(207, 100%, 98%);
+		--blue-3: hsl(205, 92%, 95%);
+		--blue-4: hsl(203, 100%, 92%);
+		--blue-5: hsl(206, 100%, 88%);
+		--blue-6: hsl(207, 93%, 83%);
+		--blue-7: hsl(207, 85%, 76%);
+		--blue-8: hsl(206, 82%, 65%);
+		--blue-9: hsl(206, 100%, 50%);
+		--blue-10: hsl(207, 96%, 48%);
+		--blue-11: hsl(208, 88%, 43%);
+		--blue-12: hsl(216, 71%, 23%);
+	}
+
+	.dark {
+		--background: 222.2 47.4% 11.2%;
+		--foreground: 210 40% 98%;
+		--layer-0: 0 0% 0%;
+		--layer-1: 0 0% 7%;
+		--layer-2: 0 0% 10%;
+		--layer-3: 0 0% 13%;
+		--layer-4: 0 0% 16%;
+		--layer-5: 0 0% 19%;
+		--layer-6: 0 0% 23%;
+		--layer-7: 0 0% 28%;
+		--layer-8: 0 0% 38%;
+		--layer-9: 0 0% 43%;
+		--layer-10: 0 0% 48%;
+		--layer-11: 0 0% 71%;
+		--layer-12: 0 0% 93%;
+		--layer-13: 0 0% 97%;
+
+		--blue-1: hsl(215, 42%, 9%);
+		--blue-2: hsl(218, 39%, 11%);
+		--blue-3: hsl(212, 69%, 16%);
+		--blue-4: hsl(209, 100%, 19%);
+		--blue-5: hsl(207, 100%, 23%);
+		--blue-6: hsl(209, 79%, 30%);
+		--blue-7: hsl(211, 66%, 37%);
+		--blue-8: hsl(211, 65%, 45%);
+		--blue-9: hsl(206, 100%, 50%);
+		--blue-10: hsl(210, 100%, 62%);
+		--blue-11: hsl(210, 100%, 72%);
+		--blue-12: hsl(205, 100%, 88%);
+	}
+
+	body {
+		@apply min-h-screen w-full flex flex-col items-center bg-layer-1 text-layer-13 p-2;
+	}
+
+	*,
+	:after,
+	:before {
+		box-sizing: border-box;
+		text-rendering: optimizeLegibility;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+}
+
+@layer utilities {
+	/* Chrome, Safari and Opera */
+	.no-scrollbar::-webkit-scrollbar {
+		display: none;
+	}
+}
