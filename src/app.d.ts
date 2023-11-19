@@ -6,7 +6,26 @@ declare global {
 		// interface Locals {}
 		// interface PageData {}
 		// interface Platform {}
+		interface Locals {
+			auth: import('lucia').AuthRequest;
+			session: import('lucia').Session | null;
+			user: import('$lib/server/db/schema/index').User | null
+		}
 	}
 }
 
-export {};
+/// <reference types="lucia" />
+declare global {
+	namespace Lucia {
+		type Auth = import('./lib/server/lucia').Auth;
+		type DatabaseUserAttributes = import('$lib/server/db/schema/index').User; // formerly `UserAttributes`
+		type DatabaseSessionAttributes = {}; // new
+		// type DatabaseUserAttributes = {
+		// 	github_username: string;
+		// };
+		// type DatabaseSessionAttributes = Record<string, never>;
+	}
+}
+
+export { };
+// using neovimjk

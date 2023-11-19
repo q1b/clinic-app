@@ -19,7 +19,7 @@ const buttonVariants = tv({
 				'destructive':
 				"bg-rose-500 text-rose-50 shadow-sm shadow-rose-300/20 hover:bg-rose-600",
 			'destructive-subtle':
-				"bg-rose-50 text-rose-500 shadow-sm shadow-rose-300/20 hover:bg-rose-100 hover:text-rose-600",
+				"bg-rose-500/10 text-rose-500 bg-rose-700/20 hover:text-rose-600",
 			outline: "border border-input bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground",
 			secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
 			link: "text-layer-11 underline-offset-4 hover:underline"

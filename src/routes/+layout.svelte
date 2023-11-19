@@ -1,9 +1,15 @@
-<script>
+<script lang="ts">
+	import type { LayoutServerData } from './$types';
 	import ThemeButton from '$lib/components/theme-button.svelte';
-	import { CalendarIcon } from 'lucide-svelte';
+	import { CalendarIcon, LogOutIcon } from 'lucide-svelte';
 	import '../app.css';
 	import { Temporal } from '@js-temporal/polyfill';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import Spinner from '$lib/components/spinner.svelte';
+	import { enhance } from '$app/forms';
 	const now = Temporal.Now.plainDateISO();
+	export let data: LayoutServerData;
+	let exiting: boolean = false;
 </script>
 
 <header class="flex w-full max-w-5xl items-center gap-x-2 justify-between mb-10 p-3">
@@ -13,12 +19,41 @@
 			<CalendarIcon />
 		</a>
 	</div>
-	<nav class="">
+	<nav class="inline-flex items-center gap-x-4">
 		<!-- TODO: Adding feature to search bar for Osteopath -->
 		<ThemeButton size={36} />
+		{#if data.user}
+			<form
+				method="POST"
+				action="/?/logout"
+				use:enhance={() => {
+					exiting = true;
+					return async ({ update }) => {
+						await update();
+						data.user = null;
+						exiting = false;
+					};
+				}}
+				class="w-full"
+			>
+				<Button
+					disabled={exiting}
+					class="w-full items-center justify-start gap-x-2 p-2"
+					variant="destructive-subtle"
+					size="icon"
+					type="submit"
+				>
+					{#if exiting}
+						<Spinner size={16} />
+					{:else}
+						<LogOutIcon />
+					{/if}
+				</Button>
+			</form>
+		{/if}
 	</nav>
 </header>
-
+<pre class="mb-12">{data.user?.name}</pre>
 <slot />
 
 <div

@@ -8,7 +8,6 @@ import TwilioClient from "twilio";
 import { remember } from "@epic-web/remember"
 import { client } from "$lib/server/db";
 import upstashClient from "./kv";
-import { createId } from '@paralleldrive/cuid2';
 import { TWILIO_SID, TWILIO_TOKEN, TWILIO_VERIFY_SID, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI, GOOGLE_SCOPE } from "$env/static/private";
 
 // default values
@@ -42,7 +41,8 @@ export const googleAuth = google(auth, {
   redirectUri: dev ? 'http://localhost:3000/google/callback' : GOOGLE_REDIRECT_URI,
   scope: ['openid', 'email', 'profile', GOOGLE_SCOPE],
 });
-export const twilioAuth = remember('twilio',() => twilio(auth, {
+
+export const twilioClient = remember('twilio',() => twilio({
   sid: TWILIO_SID,
   authToken: TWILIO_TOKEN,
   verifySid: TWILIO_VERIFY_SID,
@@ -53,7 +53,7 @@ declare global {
   var twilio: TwilioClient.Twilio | undefined;
 }
 
-function twilio(auth:Auth, options: {
+function twilio(options: {
   sid: string,
   authToken: string,
   verifySid: string
@@ -66,45 +66,23 @@ function twilio(auth:Auth, options: {
   }
   
   return {
-    async sendVarificationCode(phoneNumber: string) {
-      return await twilio.verify.v2.services(options.verifySid).verifications.create({
+    async sendVarificationCode(phoneNumber: string, password: string) {
+      const res = await twilio.verify.v2.services(options.verifySid).verifications.create({
           to: phoneNumber,
-          channel: 'sms'
-      })
+          channel: 'sms',
+      });
+      return {
+        status: res.status,
+        to: res.to
+      }
     },
     async validateCode(phoneNumber:string, code:string) {
       let verified = false;
       const verification_check = await twilio.verify.v2.services(options.verifySid).verificationChecks.create({ to: phoneNumber, code: code });
       if (verification_check.status === "approved") verified = true;
-      const id = createId();
-      const createUser = async ({attributes}:{attributes:Omit<User,'id'| 'userId' | 'phone_number' | 'phone_number_verified'>}) => {
-        return await auth.createUser({
-          attributes: {
-            id,
-            phone_number: phoneNumber,
-            phone_number_verified: verified,
-            ...attributes,
-          },
-          key: {
-            password: '',
-            providerId: 'phone',
-            providerUserId: phoneNumber,
-          },
-          userId: id,
-        })
-      };
-      const getExistingUser = async () => {
-        try {
-          const res = await auth.getKey('phone', phoneNumber)
-          return await auth.getUser(res?.userId)
-        } catch (error) {
-          return null
-        }
-      }
       return {
-        getExistingUser,
-        createUser,
-        verified
+        verified,
+        to: verification_check.to
       }    
     },
   }
