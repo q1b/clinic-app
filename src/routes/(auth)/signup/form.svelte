@@ -29,13 +29,15 @@
 		<h2 class="text-layer-13 font-bold text-2xl mb-2">Create Your Account</h2>
 		<p>
 			Already registered?
-			<a class="text-sky-400 font-medium underline underline-offset-4" href="/signin">Sign in </a>
+			<button class="text-sky-400 font-medium underline underline-offset-4" on:click
+				>Sign in
+			</button>
 			to your account
 		</p>
 	</div>
 	<form
 		method="post"
-		action="?/sendOTP"
+		action="/(auth)/signup/?/sendOTP"
 		use:enhance={async () => {
 			$otp = 'sending';
 			return async ({ update, result }) => {

@@ -1,4 +1,5 @@
-import { auth, twilioClient } from '$lib/server/lucia';
+import { smsClient } from '$lib/server/smsClient';
+import {auth} from "$lib/server/lucia"
 import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import type { PageServerLoad } from './$types';
@@ -10,8 +11,8 @@ export const load = (async () => {
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-	sendOTP: async ({ request, locals }) => {
-		const form = await request.formData();
+	sendOTP: async (event) => {
+		const form = await event.request.formData();
 		const fullName = form.get('full-name')!;
 		const phoneNumber = form.get('phone-number');
 		const password = form.get('password')!;
@@ -26,9 +27,8 @@ export const actions: Actions = {
 		}
 		if(key !== null) return fail(404, {error: 'User Already Exist In Database'})
 		try {
-			const { status, to } = await twilioClient.sendVarificationCode(
-				`+91${phoneNumber.toString()}`,
-				password.toString()
+			const { status, to } = await smsClient.sendVarificationCode(
+				`+91${phoneNumber.toString()}`
 			);
 			console.log("\nVarificationCode Status:",status)
       const id = createId()
@@ -77,17 +77,17 @@ export const actions: Actions = {
 				userId: user.userId,
 				attributes: {}
 			});
-			locals.auth.setSession(session);
+			auth.handleRequest(event).setSession(session)
 			return {
 				status: status
 			};
 		} catch (error) {
 			console.log(error);
-			return fail(404, { error: true });
+			return fail(404, { error: "Failed to Send VarificationCode" });
 		}
 	},
-	verifyOTP: async ({ request, locals }) => {
-		const form = await request.formData();
+	verifyOTP: async (event) => {
+		const form = await event.request.formData();
 		const otpCode = form.get('otp-code');
 		const fullName = form.get('full-name');
 		const phoneNumber = form.get('phone-number');
@@ -97,7 +97,7 @@ export const actions: Actions = {
 		if (phoneNumber === null) return fail(404, { error: 'Phone Number Undefined' });
 		if (password === null) return fail(404, { error: 'Password Undefined' });
 		try {
-			const { verified, to } = await twilioClient.validateCode(
+			const { verified, to } = await smsClient.validateCode(
 				`+91${phoneNumber.toString()}`,
 				otpCode.toString()
 			);

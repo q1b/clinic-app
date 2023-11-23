@@ -1,17 +1,22 @@
 <script context="module">
 	import Button from '$lib/components/ui/button/button.svelte';
 	export const meta = {
-		title: 'Button',
+		title: 'Components/Button',
 		component: Button,
 		tags: ['autodocs'],
 		argTypes: {
+			builders: {
+				control: false
+			},
 			variant: {
 				control: { type: 'select' },
-				options: ['default']
+				options: Object.keys(variants),
+				defaultValue: 'default'
 			},
 			size: {
 				control: { type: 'select' },
-				options: ['sm', 'default', 'lg', 'icon'],
+				options: Object.keys(sizes),
+				description: 'The size of the button',
 				defaultValue: 'sm'
 			}
 		}
@@ -20,6 +25,8 @@
 
 <script>
 	import { Story, Template } from '@storybook/addon-svelte-csf';
+	import { Edit2, LogOutIcon } from 'lucide-svelte';
+	import { sizes, variants } from '.';
 
 	let count = 0;
 	function handleClick() {
@@ -34,23 +41,61 @@
 	</Button>
 </Template>
 
-<!-- <Story name="Default" /> -->
+<!-- Dynamic snippet should be disabled for this story -->
+<Story name="Button No Args" />
 
-<Story name="Default">
-	<Button variant="default" on:click on:click={handleClick}>Log out</Button>
+<Story name="Solid">
+	<div class="flex items-center gap-x-4">
+		{#each Object.keys(sizes) as size}
+			<Button icon={Edit2} {size} variant="default" on:click on:click={handleClick}>
+				Edit Text
+			</Button>
+		{/each}
+	</div>
+</Story>
+<Story name="outline">
+	<div class="flex items-center gap-x-4">
+		{#each Object.keys(sizes) as size}
+			<Button icon={LogOutIcon} {size} variant="outline" on:click on:click={handleClick}>
+				Click
+			</Button>
+		{/each}
+	</div>
+</Story>
+<Story name="secondary">
+	<div class="flex items-center gap-x-4">
+		{#each Object.keys(sizes) as size}
+			<Button icon={LogOutIcon} {size} variant="secondary" on:click on:click={handleClick}>
+				Log out</Button
+			>
+		{/each}
+	</div>
+</Story>
+<Story name="ghost">
+	<div class="flex items-center gap-x-4">
+		{#each Object.keys(sizes) as size}
+			<Button icon={LogOutIcon} {size} variant="ghost" on:click on:click={handleClick}>
+				Log out</Button
+			>
+		{/each}
+	</div>
+</Story>
+<Story name="Link">
+	<div class="flex items-center gap-x-4">
+		{#each Object.keys(sizes) as size}
+			<Button icon={LogOutIcon} {size} variant="link" on:click on:click={handleClick}>
+				Log out</Button
+			>
+		{/each}
+	</div>
 </Story>
 
 <Story name="Destructive">
-	<Button variant="destructive" on:click on:click={handleClick}>Log out</Button>
-</Story>
-
-<Story name="Subtle-Destructive">
-	<Button variant="destructive-subtle" on:click on:click={handleClick}>Log out</Button>
-</Story>
-
-<!-- <Story name="Square" source args={{rounded: false}}/>  -->
-
-<!-- Dynamic snippet should be disabled for this story -->
-<Story name="Button No Args">
-	<Button>Label</Button>
+	<div class="flex items-center gap-x-4">
+		{#each ['sm', 'default', 'lg', 'icon'] as size}
+			<Button icon={LogOutIcon} {size} variant="destructive" on:click on:click={handleClick}>
+				Log out</Button
+			>
+		{/each}
+	</div>
 </Story>

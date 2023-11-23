@@ -7,11 +7,20 @@
 	const dispath = createEventDispatcher();
 	let validating = false;
 	let validated = false;
-
+	let errMsg: string | null = null;
 	export let redirect: boolean = false;
 	let isPwdHidden = true;
 </script>
 
+<div class="mb-8">
+	<h2 class="text-layer-13 font-bold text-2xl mb-2">Sign in to your account</h2>
+	<p>
+		Don't have an account? <button
+			on:click
+			class="text-sky-400 font-medium underline underline-offset-4">Sign up</button
+		> for free
+	</p>
+</div>
 <form
 	method="post"
 	use:enhance={async () => {
@@ -20,9 +29,11 @@
 			await update({ reset: false });
 			validating = false;
 			validated = result['data']?.validated;
+			errMsg = result['data']?.message;
 			dispath('load', { validated });
 		};
 	}}
+	action="/login/?/login"
 >
 	<input type="hidden" name="redirect" value={redirect} />
 	<div class="mb-4">
@@ -46,6 +57,11 @@
 					class="block flex-1 border-0 bg-transparent py-2 pl-1 text-layer-12 focus:ring-0"
 				/>
 			</div>
+			{#if errMsg}
+				<div class="mt-2 text-sm text-rose-500 dark:text-rose-400 rounded-md">
+					{errMsg}
+				</div>
+			{/if}
 		</div>
 	</div>
 	<div class="mb-6">

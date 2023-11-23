@@ -2,9 +2,16 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="manifest" href="%sveltekit.assets%/manifest.json" />
+
+    <link rel="icon" href="%sveltekit.assets%/assets/favicon.ico" sizes="any">
+    <link rel="icon" href="%sveltekit.assets%/assets/logo.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="%sveltekit.assets%/assets/apple-touch-icon-180x180.png">
+    <meta name="theme-color" content="#111111">
+
 		%sveltekit.head%
+    
     <script>
       // safe us from splash of screen
       const defaultTheme = undefined;
@@ -17,6 +24,7 @@
           window.matchMedia("(prefers-color-scheme: dark)").matches
         ) {
           document.documentElement.classList.add("dark");
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#111111')
         } else {
           document.documentElement.classList.remove("dark");
         }

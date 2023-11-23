@@ -4,11 +4,11 @@ import {
 	calendar as googleCalendar
 } from "@googleapis/calendar";
 import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI, GOOGLE_SCOPE } from "$env/static/private";
-import { auth as luciaAuth } from "./lucia"
+import { setGoogleTokens } from "./kv";
 export const CalendarName = "Osteopathy Appointment Calendar"
 
-export default function calendarService(credential: { access_token: string; refresh_token: string | null; id: string }) {
-	const googleAuth = (credential: { access_token: string; refresh_token: string | null; id: string }) => {
+export default function calendarService(credential: { access_token: string; refresh_token: string | null; userId: string }) {
+	const googleAuth = (credential: { access_token: string; refresh_token: string | null; userId: string }) => {
 		async function getGoogleAuth() {
 			const { client_id, client_secret, redirect_uri } = {
 				client_id: GOOGLE_CLIENT_ID,
@@ -34,14 +34,16 @@ export default function calendarService(credential: { access_token: string; refr
 				const token = res?.data;
 				credential.access_token = token.access_token;
 				// credential.expiry_date = token.expiry_date;
-				await luciaAuth.updateSessionAttributes(credential.id,{
-					access_token: credential.access_token
-        })
+				await setGoogleTokens(credential.userId, {
+					access_token: credential.access_token,
+					refersh_token: credential.refresh_token,
+				})
 				myGoogleAuth.setCredentials({
 					access_token: credential.access_token,
 					refresh_token: credential.refresh_token,
 					scope: ['openid', 'email', 'profile', GOOGLE_SCOPE].join(' '),
-					token_type: "Bearer"
+					token_type: "Bearer",
+					expiry_date: token.expiry_date
 				});
 			} catch (err) {
 				let message;

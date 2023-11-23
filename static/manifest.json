@@ -1,0 +1,35 @@
+{
+	"short_name": "@s-App for Osteopathy",
+	"name": "@s-App",
+	"start_url": "/",
+	"background_color": "#ffffff",
+	"display_override": ["fullscreen", "minimal-ui"],
+	"display": "standalone",
+	"scope": "/",
+	"theme_color": "#ffffff",
+	"description": "In our university we have Students who are going to be specialised in Osteopathy in upcoming years, for them to achieve this task, they give other students Session in order to get better without any charges, yet this task can be automated and improved.",
+"icons": [
+  {
+    "src": "assets/pwa-64x64.png",
+    "sizes": "64x64",
+    "type": "image/png"
+  },
+  {
+    "src": "assets/pwa-192x192.png",
+    "sizes": "192x192",
+    "type": "image/png"
+  },
+  {
+    "src": "assets/pwa-512x512.png",
+    "sizes": "512x512",
+    "type": "image/png",
+    "purpose": "any"  
+  },
+  {
+    "src": "assets/maskable-icon-512x512.png",
+    "sizes": "512x512",
+    "type": "image/png",
+    "purpose": "maskable"
+  }
+]
+}

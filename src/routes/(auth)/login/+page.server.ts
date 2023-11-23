@@ -8,8 +8,8 @@ export const load = (async () => {
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-	default: async ({ request, locals }) => {
-		const form = await request.formData();
+	login: async (event) => {
+		const form = await event.request.formData();
 		const phoneNumber = form.get('phone-number')!;
 		const password = form.get('password')!;
 		const isRedirected = form.get('redirect')!;
@@ -21,8 +21,9 @@ export const actions: Actions = {
 				userId: key.userId,
 				attributes: {}
 			});
-			locals.auth.setSession(session); // set session cookie
+			auth.handleRequest(event).setSession(session) // set session cookie
 		} catch (e) {
+			console.log(e)
 			if (
 				e instanceof LuciaError &&
 				(e.message === 'AUTH_INVALID_KEY_ID' || e.message === 'AUTH_INVALID_PASSWORD')
@@ -41,7 +42,7 @@ export const actions: Actions = {
 		}
 		// redirect to
 		// make sure you don't throw inside a try/catch block!
-		if(isRedirected) throw redirect(302, "/");
+		if(isRedirected === 'true') throw redirect(302, "/");
 		return {
 			validated: true
 		}

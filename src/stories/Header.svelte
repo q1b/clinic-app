@@ -1,6 +1,6 @@
 <script lang="ts">
 	import './header.css';
-	import Button from '$lib/components/ui/button/button.svelte';
+	import Button from '$lib/components/ui/box-button/button.svelte';
 
 	import { createEventDispatcher } from 'svelte';
 

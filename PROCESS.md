@@ -40,3 +40,5 @@
       - initialize sqlite client ( using turso here, )
       - setting up drizzle
 - Creating Signup / Signin Page for users
+  - setting up group routes `(auth)/login` and `(auth)/signup`
+  - building logic for phone auth
