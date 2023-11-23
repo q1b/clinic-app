@@ -44,7 +44,8 @@ export const GET = async (event) => {
 			if(existingUser?.email === null) {
 				const res= await auth.updateUserAttributes(sessionUserId,{
 					email: googleUser.email,
-					image: existingUser.image === null ? googleUser.picture : existingUser.image
+					image: existingUser.image === null ? googleUser.picture : existingUser.image,
+					role: 'osteopath'
 				}) 
 				existingUser.email = res.email
 				existingUser.image = existingUser.image === null ? googleUser.picture : existingUser.image
@@ -85,10 +86,6 @@ export const GET = async (event) => {
 				image: googleUser.picture,
 				email: googleUser.email
 			})
-      const osteopathUser = await db.query.osteopath.findFirst({
-        where: eq( user.id, sessionUserId )
-      })
-      console.log("Osteopath Response", JSON.stringify(osteopathUser,null,2))
 			if (isOsteopath && osteopath === undefined) {
 				try {
 					console.log('Creating Osteopath Account');
@@ -99,6 +96,11 @@ export const GET = async (event) => {
 						})
 						.returning();
 					osteopathId = res[0].id;
+					await auth.updateUserAttributes(sessionUserId,{
+						image: googleUser.picture,
+						email: googleUser.email,
+						role: 'osteopath'
+					})
 					console.log('Successfully, Created Osteopathy Account');
 				} catch (error) {
 					console.log(error);
