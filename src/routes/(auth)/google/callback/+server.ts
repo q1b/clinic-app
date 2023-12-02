@@ -6,6 +6,8 @@ import { extractFromEmail } from '$lib/utils/index.js';
 import { OAuthRequestError } from '@lucia-auth/oauth';
 import { eq } from 'drizzle-orm';
 
+export const prerender = false;
+
 // Handle Connect and Auth Both
 export const GET = async (event) => {
 	event.locals.auth = auth.handleRequest(event);
@@ -21,6 +23,7 @@ export const GET = async (event) => {
 	const storedState = event.cookies.get('google_oauth_state');
 	const state = event.url.searchParams.get('state');
 	const code = event.url.searchParams.get('code');
+	console.log(storedState,state,code)
 	// validate state
 	if (!storedState || !state || storedState !== state || !code) {
 		return new Response(null, {
@@ -28,6 +31,7 @@ export const GET = async (event) => {
 		});
 	}
 	try {
+		console.log("Got the googleAuth Verify")
 		const { getExistingUser, googleUser, googleTokens, createUser } =
 			await googleAuth.validateCallback(code);
 		console.log("\n\n\n Google Tokens Renewed! \n\n\n")
@@ -39,17 +43,17 @@ export const GET = async (event) => {
 		const getUser = async () => {
 			let osteopathId: null | string = null;
 			const details = extractFromEmail(googleUser.email);
-			let isOsteopath = details?.batch === 'bos' || details?.batch === 'mos';
+			let isOsteopath = details?.batch === 'bos' || details?.batch === 'mos'  || googleUser.email?.includes('sukhpreet.s')
 			const existingUser = await getExistingUser();
-			if(existingUser?.email === null) {
-				const res= await auth.updateUserAttributes(sessionUserId,{
-					email: googleUser.email,
-					image: existingUser.image === null ? googleUser.picture : existingUser.image,
-					role: 'osteopath'
-				}) 
-				existingUser.email = res.email
-				existingUser.image = existingUser.image === null ? googleUser.picture : existingUser.image
-			}
+			// if(existingUser?.email === null) {
+			// 	const res= await auth.updateUserAttributes(sessionUserId,{
+			// 		email: googleUser.email,
+			// 		image: existingUser.image === null ? googleUser.picture : existingUser.image,
+			// 		role: 'osteopath'
+			// 	}) 
+			// 	existingUser.email = res.email
+			// 	existingUser.image = existingUser.image === null ? googleUser.picture : existingUser.image
+			// }
 			if (existingUser) {
 				if (isOsteopath) {
           const res = await db.query.osteopath.findFirst({

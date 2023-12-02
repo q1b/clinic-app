@@ -6,26 +6,33 @@
 	import * as Tabs from '$lib/components/ui/tabs';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import type { PageData } from './$types';
-	import { ArrowRightCircleIcon, Edit, Edit2, FileEditIcon, PencilIcon } from 'lucide-svelte';
+	import { ArrowRightCircleIcon, Edit } from 'lucide-svelte';
+	import { extractFromEmail } from '$lib/utils';
+	import Dash from '$lib/components/dash.svelte';
 
 	export let data: PageData;
 
 	$: osteopathUserId = data.osteopathUser.id;
 	$: osteopathId = $page.params.id;
 	$: userId = data.user.id;
+	$: emailData = extractFromEmail(data.osteopathUser.email);
+	$: batch = emailData?.batch;
+	$: year = emailData?.year;
 
 	let dialogOpen = false;
+	let profileDialogOpen = false;
 	let tab: 'signup' | 'login' = 'signup';
 </script>
 
 <div class="flex flex-col items-center gap-y-12">
 	{#if userId !== osteopathUserId}
-		<div
+		<button
+			on:click={() => (profileDialogOpen = true)}
 			class="flex items-center px-3 py-2 rounded-full w-max shadow-inner shadow-layer-5 border border-layer-6 gap-x-2"
 		>
 			<img src={data.osteopathUser?.image} width={42} height={42} class="rounded-full" alt="" />
 			<h3 class="text-lg">{data.osteopathUser?.name}</h3>
-		</div>
+		</button>
 	{/if}
 	<View
 		bydates={data.by.dates}
@@ -35,8 +42,10 @@
 				body: JSON.stringify({
 					...e.detail,
 					osteopathUserId,
+					osteopathEmail: data.osteopathUser.email,
 					osteopathId,
-					userId
+					userId,
+					userEmail: data.user.email
 				}),
 				headers: {
 					'content-type': 'application/json'
@@ -63,6 +72,7 @@
 		</div>
 	{/if}
 </div>
+
 <Dialog.Root bind:open={dialogOpen}>
 	<Dialog.Content class="min-h-[534px]">
 		<Tabs.Root bind:value={tab}>
@@ -94,5 +104,26 @@
 				/>
 			</Tabs.Content>
 		</Tabs.Root>
+	</Dialog.Content>
+</Dialog.Root>
+
+<Dialog.Root bind:open={profileDialogOpen}>
+	<Dialog.Content class="flex flex-col w-max items-center">
+		<img
+			src={data.osteopathUser.image}
+			class="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 rounded-xl"
+			alt="Avatar"
+		/>
+		<h3 class="text-layer-12 font-bold text-2xl sm:text-4xl">{data.osteopathUser.name}</h3>
+		{#if batch}
+			<div class="flex items-center bg-layer-5 px-2">
+				<span>{year}</span>
+				<Dash class="bg-layer-8" />
+				<span>{batch?.toUpperCase()} Batch</span>
+			</div>
+		{/if}
+		<p class="text-center w-64 sm:w-auto sm:text-xl">
+			{data.osteopathUser.bio}
+		</p>
 	</Dialog.Content>
 </Dialog.Root>

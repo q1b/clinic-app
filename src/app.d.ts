@@ -9,6 +9,7 @@ declare global {
 		interface Locals {
 			auth: import('lucia').AuthRequest | null;
 			session: import('lucia').Session | null;
+			osteopathID: string | null;
 		}
 	}
 }
@@ -26,5 +27,5 @@ declare global {
 	}
 }
 
-export { };
+export {};
 // using neovimjk

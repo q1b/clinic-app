@@ -8,6 +8,7 @@
 		LogInIcon,
 		LogOutIcon,
 		MenuIcon,
+		Settings2Icon,
 		User2Icon
 	} from 'lucide-svelte';
 	import '../app.css';
@@ -17,9 +18,9 @@
 	import { enhance } from '$app/forms';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import Logo from '$lib/components/logo.svelte';
-	import { setContext } from 'svelte';
-	import { writable } from 'svelte/store';
-	import { createLocalStorage, persist } from '@macfja/svelte-persistent-store';
+	// import { setContext } from 'svelte';
+	// import { writable } from 'svelte/store';
+	// import { createLocalStorage, persist } from '@macfja/svelte-persistent-store';
 	const now = Temporal.Now.plainDateISO();
 	export let data: LayoutServerData;
 	let exiting: boolean = false;
@@ -39,7 +40,9 @@
 					<Avatar.Image src={data.user.image} alt="avatar" />
 					<Avatar.Fallback>CN</Avatar.Fallback>
 				</Avatar.Root>
-				<div class="flex -space-y-1 flex-col p-0.5 items-start font-medium">
+				<div
+					class="flex overflow-auto max-w-[224px] -space-y-1 flex-col p-0.5 items-start font-medium"
+				>
 					<span class="">{data.user.name}</span>
 					<span class="text-sm">{data.user.email || '-----@-.com'}</span>
 				</div>
@@ -89,13 +92,13 @@
 					</DropdownMenu.Item>
 					<DropdownMenu.Item asChild>
 						<Button
-							href="/profile"
+							href="/settings"
 							class="w-full bg-layer-3 hover:bg-layer-4 items-center justify-start gap-x-2 p-2"
 							variant="ghost"
 							size="sm"
 						>
-							<User2Icon size={16} />
-							Profile
+							<Settings2Icon size={16} />
+							Settings
 						</Button>
 					</DropdownMenu.Item>
 					<DropdownMenu.Item asChild>
@@ -152,11 +155,11 @@
 		<div
 			class="flex flex-wrap xs:flex-row items-center justify-center space-x-4 text-sm font-semibold leading-6 text-layer-11"
 		>
-			<a href="#" class="hover:underline">Privacy policy</a>
+			<a href="/privacy-policy" class="hover:underline">Privacy policy</a>
 			<div class="h-4 w-px hidden xs:block bg-slate-500/20"></div>
-			<a href="#" class="hover:underline">Term of Service</a>
+			<a href="/term-of-service" class="hover:underline">Term of Service</a>
 			<div class="h-4 w-px hidden xs:block bg-slate-500/20"></div>
-			<a href="#" class="hover:underline">Contact Us</a>
+			<a href="/contact-us" class="hover:underline">Contact Us</a>
 		</div>
 	</div>
 	<span class="p-px mt-1 font-medium text-sm text-layer-9 text-center sm:text-left"

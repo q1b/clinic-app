@@ -1,9 +1,11 @@
 import { dev } from '$app/environment';
 import { googleAuth } from '$lib/server/lucia.js';
 
-export const GET = async ({ cookies, locals, url: { searchParams } }) => {
-	const connect = searchParams.get('connect');
-	const sessionUserId = locals.session?.user.id;
+export const prerender = false;
+
+export const GET = async (event) => {
+	const connect = event.url.searchParams.get('connect');
+	const sessionUserId = event.locals.session?.user.id;
 	if (connect === null) {
 		if (sessionUserId) {
 			return new Response(null, {
@@ -14,9 +16,8 @@ export const GET = async ({ cookies, locals, url: { searchParams } }) => {
 			});
 		}
 	}
-
 	const [url, state] = await googleAuth.getAuthorizationUrl();
-	cookies.set('google_oauth_state', state, {
+	event.cookies.set('google_oauth_state', state, {
 		httpOnly: true,
 		secure: !dev,
 		path: '/',

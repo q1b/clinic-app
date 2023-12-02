@@ -10,11 +10,10 @@
 	import Dash from '$lib/components/dash.svelte';
 	import { fly } from 'svelte/transition';
 	import { quintInOut } from 'svelte/easing';
-	import { ArrowRightCircleIcon, PlusCircleIcon, Trash2Icon } from 'lucide-svelte';
+	import { ArrowRightCircleIcon, CheckIcon, PlusCircleIcon, Trash2Icon } from 'lucide-svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { page } from '$app/stores';
 	import { DotsVertical } from 'radix-icons-svelte';
-	import Button from '$lib/components/ui/button/button.svelte';
 	import { appointment } from '$lib/shared/db/schema';
 	import { eq } from 'drizzle-orm';
 	import { db } from '$lib/shared/db';
@@ -42,11 +41,11 @@
 		}[]
 	>;
 
-	const [year, month, day] = Object.keys(bydates)[0]
-		.split('-')
-		.map((v) => +`${v}`);
+	// const [year, month, day] = Object.keys(bydates)[0]
+	// 	?.split('-')
+	// 	.map((v) => +`${v}`);
 
-	const today = new Temporal.PlainDate(year, month, day);
+	const today = Temporal.Now.plainDateISO();
 
 	export let selected = [new Temporal.PlainDate(today.year, today.month, today.day)];
 
@@ -64,7 +63,13 @@
 		weeks: [[], [], [], [], [], []],
 		date: new Temporal.PlainYearMonth(selected[0].year, selected[0].month)
 	} as {
-		weeks: { day: Temporal.PlainDate; seats: number }[][];
+		weeks: {
+			day: Temporal.PlainDate;
+			seats: {
+				booked: (typeof bydates)[string];
+				available: (typeof bydates)[string];
+			};
+		}[][];
 		date: Temporal.PlainYearMonth;
 	};
 
@@ -87,8 +92,23 @@
 
 	for (let week = 0; week < 6; week++) {
 		for (let index = 0; index < 7; index++) {
-			const seats = bydates[starting_point.toString()]?.length || 0;
-			view.weeks[week]?.push({ day: starting_point, seats });
+			let seats = {
+				booked: [] as (typeof bydates)[string],
+				available: [] as (typeof bydates)[string]
+			};
+			for (let i = 0; i < bydates[starting_point.toString()]?.length; i++) {
+				console.log(bydates[starting_point.toString()][i].userId);
+				if (bydates[starting_point.toString()][i].userId) {
+					seats.booked.push(bydates[starting_point.toString()][i]);
+				} else {
+					seats.available.push(bydates[starting_point.toString()][i]);
+				}
+			}
+			// const seats = bydates[starting_point.toString()]?.length || 0;
+			view.weeks[week]?.push({
+				day: starting_point,
+				seats
+			});
 			starting_point = starting_point.add({ days: 1 });
 		}
 	}
@@ -104,7 +124,17 @@
 		}
 		for (let week = 0; week < 6; week++) {
 			for (let index = 0; index < 7; index++) {
-				const seats = bydates[starting_point.toString()]?.length || 0;
+				let seats = {
+					booked: [] as (typeof bydates)[string],
+					available: [] as (typeof bydates)[string]
+				};
+				for (let i = 0; i < bydates[starting_point.toString()]?.length; i++) {
+					if (bydates[starting_point.toString()][i].userId) {
+						seats.booked.push(bydates[starting_point.toString()][i]);
+					} else {
+						seats.available.push(bydates[starting_point.toString()][i]);
+					}
+				}
 				view.weeks[week][index] = { day: starting_point, seats };
 				starting_point = starting_point.add({ days: 1 });
 			}
@@ -262,11 +292,23 @@
 								>
 									{day.toLocaleString('en-us', { day: '2-digit' })}
 								</time>
-								{#if seats !== 0}
+								{#if seats.available.length !== 0 && seats.booked.length !== 0}
+									<span
+										class="absolute text-sm border border-layer-0 group-disabled:!invisible group-aria-selected:bg-layer-13 group-aria-selected:text-layer-0 text-layer-12 inline-flex items-center justify-center -top-1 -right-1 bg-yellow-500 w-4 h-4 rounded"
+									>
+										{seats.available.length}
+									</span>
+								{:else if seats.available.length !== 0}
 									<span
 										class="absolute text-sm border border-layer-0 group-disabled:!invisible group-aria-selected:bg-layer-13 group-aria-selected:text-layer-0 text-layer-12 inline-flex items-center justify-center -top-1 -right-1 bg-layer-5 w-4 h-4 rounded"
 									>
-										{seats}
+										{seats.available.length}
+									</span>
+								{:else if seats.booked.length > 0}
+									<span
+										class="absolute text-sm border border-layer-0 group-disabled:!invisible group-aria-selected:bg-layer-13 group-aria-selected:text-layer-0 text-layer-12 inline-flex items-center justify-center -top-1 -right-1 bg-layer-5 w-4 h-4 rounded"
+									>
+										<CheckIcon />
 									</span>
 								{/if}
 							</button>

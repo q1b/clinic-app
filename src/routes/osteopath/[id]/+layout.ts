@@ -20,7 +20,7 @@ export const load: LayoutLoad = async (event) => {
 			with: {
 				user: true,
 				appointments: {
-					where: and(isNull(appointment.userId), gte(appointment.date, t))
+					where: and(gte(appointment.date, t))
 				}
 			}
 		});

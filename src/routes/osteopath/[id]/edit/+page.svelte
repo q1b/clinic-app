@@ -3,9 +3,10 @@
 	import View from './slot-view-edit.svelte';
 	import type { PageData } from './$types';
 	import { ArrowLeftCircleIcon, ArrowRightCircleIcon, Edit } from 'lucide-svelte';
-	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
+	import { getNums } from '../utilts';
+	import { Temporal } from '@js-temporal/polyfill';
 
 	export let data: PageData;
 
@@ -32,6 +33,31 @@
 			console.log(await response.json());
 		}}
 	/>
+	{#await data.streamed.data}
+		... Loading
+	{:then appointments}
+		{#each appointments as appointment}
+			{@const [hour, minute] = getNums(appointment.startTime, ':')}
+			{@const formattedEndAt = new Temporal.PlainTime(hour, minute)
+				.add({
+					minutes: +`${appointment.duration}`
+				})
+				.toLocaleString('en-us', {
+					hour: '2-digit',
+					minute: '2-digit',
+					hourCycle: 'h24'
+				})}
+			<div>
+				<div>
+					{appointment.user.name}
+				</div>
+				<span>{appointment.date}</span>
+				<div>
+					{appointment.startTime} - {formattedEndAt}
+				</div>
+			</div>
+		{/each}
+	{/await}
 	<!-- svelte-ignore missing-declaration -->
 	<a
 		href="/osteopath/{osteopathId}"

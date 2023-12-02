@@ -3,8 +3,9 @@
 	import Dash from '$lib/components/dash.svelte';
 	import { fly } from 'svelte/transition';
 	import { quintInOut } from 'svelte/easing';
-	import { ArrowRightCircleIcon } from 'lucide-svelte';
+	import { ArrowRightCircleIcon, CheckIcon } from 'lucide-svelte';
 	import { createEventDispatcher } from 'svelte';
+	import { getNums, getPlainDate } from './utilts';
 
 	const dispatch = createEventDispatcher<{
 		book: {
@@ -28,13 +29,18 @@
 			userId: string | null;
 		}[]
 	>;
-	const [year, month, day] = Object.keys(bydates)[0]
-		.split('-')
-		.map((v) => +`${v}`);
+	let [year, month, day] = getNums(Object.keys(bydates)[0], '-');
 
-	const today = new Temporal.PlainDate(year, month, day);
+	let is12 = false;
 
-	export let selected = new Temporal.PlainDate(today.year, today.month, today.day);
+	if (month === 12) {
+		month = 11;
+		is12 = true;
+	}
+
+	let today = getPlainDate({ year, month, day });
+
+	export let selected = getPlainDate({ year: today.year, month: today.month, day: today.day });
 
 	let selectedTimeslot: {
 		id: string;
@@ -43,14 +49,22 @@
 		duration: '30' | '45' | '60';
 	} | null = null;
 
-	let min = new Temporal.PlainDate(today.year, today.month, today.day);
-	let max = new Temporal.PlainDate(today.year, today.month + 1, today.day);
+	let min = getPlainDate({ year: today.year, month: today.month, day: today.day });
+
+	let max = getPlainDate({ year: today.year, month: today.month + 1, day: today.day });
 
 	let view = {
 		weeks: [[], [], [], [], [], []],
 		date: new Temporal.PlainYearMonth(selected.year, selected.month)
 	} as {
-		weeks: { day: Temporal.PlainDate; disabled: boolean }[][];
+		weeks: {
+			day: Temporal.PlainDate;
+			disabled: boolean;
+			seats: {
+				booked: (typeof bydates)[string];
+				available: (typeof bydates)[string];
+			};
+		}[][];
 		date: Temporal.PlainYearMonth;
 	};
 
@@ -74,7 +88,20 @@
 	for (let week = 0; week < 6; week++) {
 		for (let index = 0; index < 7; index++) {
 			const disabled = bydates[starting_point.toString()] ? false : true;
-			view.weeks[week]?.push({ day: starting_point, disabled });
+			let seats = {
+				booked: [] as (typeof bydates)[string],
+				available: [] as (typeof bydates)[string]
+			};
+			if (disabled === false)
+				for (let i = 0; i < bydates[starting_point.toString()]?.length; i++) {
+					console.log(bydates[starting_point.toString()][i].userId);
+					if (bydates[starting_point.toString()][i].userId) {
+						seats.booked.push(bydates[starting_point.toString()][i]);
+					} else {
+						seats.available.push(bydates[starting_point.toString()][i]);
+					}
+				}
+			view.weeks[week]?.push({ day: starting_point, disabled, seats });
 			starting_point = starting_point.add({ days: 1 });
 		}
 	}
@@ -91,7 +118,20 @@
 		for (let week = 0; week < 6; week++) {
 			for (let index = 0; index < 7; index++) {
 				const disabled = bydates[starting_point.toString()] ? false : true;
-				view.weeks[week][index] = { day: starting_point, disabled };
+				let seats = {
+					booked: [] as (typeof bydates)[string],
+					available: [] as (typeof bydates)[string]
+				};
+				if (disabled === false)
+					for (let i = 0; i < bydates[starting_point.toString()]?.length; i++) {
+						console.log(bydates[starting_point.toString()][i].userId);
+						if (bydates[starting_point.toString()][i].userId) {
+							seats.booked.push(bydates[starting_point.toString()][i]);
+						} else {
+							seats.available.push(bydates[starting_point.toString()][i]);
+						}
+					}
+				view.weeks[week][index] = { day: starting_point, disabled, seats };
 				starting_point = starting_point.add({ days: 1 });
 			}
 		}
@@ -165,7 +205,7 @@
 			<div role="rowgroup" class="flex w-full flex-col rounded-md gap-0.5">
 				{#each view.weeks as week}
 					<div role="row" class="flex items-center gap-1 xs:gap-2 sm:gap-4">
-						{#each week as { day, disabled }}
+						{#each week as { day, disabled, seats }}
 							<button
 								type="button"
 								role="gridcell"
@@ -178,6 +218,8 @@
 								aria-selected:bg-layer-13
 								aria-selected:text-layer-0
 								aria-selected:border-transparent
+								group
+								relative
 							"
 								aria-selected={selected.equals(day)}
 								disabled={disabled || view.date.month !== day.month || day.since(min).sign === -1}
@@ -192,6 +234,25 @@
 								>
 									{day.toLocaleString('en-us', { day: '2-digit' })}
 								</time>
+								{#if seats.available.length !== 0 && seats.booked.length !== 0}
+									<span
+										class="absolute text-sm border border-layer-0 group-disabled:!invisible group-aria-selected:bg-layer-13 group-aria-selected:text-layer-0 text-layer-12 inline-flex items-center justify-center -top-1 -right-1 bg-yellow-500 w-4 h-4 rounded"
+									>
+										{seats.available.length}
+									</span>
+								{:else if seats.available.length !== 0}
+									<span
+										class="absolute text-sm border border-layer-0 group-disabled:!invisible group-aria-selected:bg-layer-13 group-aria-selected:text-layer-0 text-layer-12 inline-flex items-center justify-center -top-1 -right-1 bg-layer-5 w-4 h-4 rounded"
+									>
+										{seats.available.length}
+									</span>
+								{:else if seats.booked.length > 0}
+									<span
+										class="absolute text-sm border border-layer-0 group-disabled:!invisible group-aria-selected:bg-layer-13 group-aria-selected:text-layer-0 text-layer-12 inline-flex items-center justify-center -top-1 -right-1 bg-layer-5 w-4 h-4 rounded"
+									>
+										<CheckIcon />
+									</span>
+								{/if}
 							</button>
 						{/each}
 					</div>
@@ -214,7 +275,7 @@
 		</h4>
 		<ul class="flex flex-col gap-y-2">
 			{#if bydates[selected.toString()]}
-				{#each bydates[selected.toString()] as { id, date, startTime, duration }}
+				{#each bydates[selected.toString()] as { id, date, startTime, duration, userId }}
 					{@const [hour, minute] = startTime?.split(':').map((v) => +v)}
 					{@const formattedStartTime = new Temporal.PlainTime(hour, minute).toLocaleString(
 						'en-us',
@@ -242,9 +303,10 @@
 									duration
 								};
 							}}
+							disabled={userId !== null}
 							class="flex group
 							aria-pressed:bg-layer-13
-							aria-pressed:text-layer-0 items-center gap-x-1 px-1.5 py-0.5
+							aria-pressed:text-layer-0 disabled:bg-layer-2 disabled:text-layer-7 items-center gap-x-1 px-1.5 py-0.5
 							bg-layer-3 rounded-md"
 						>
 							<span class="whitespace-nowrap tabular-nums">{formattedStartTime}</span>

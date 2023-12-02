@@ -1,6 +1,6 @@
-import { db } from "$lib/shared/db"
-import { appointment } from "$lib/shared/db/schema"
-import { eq } from "drizzle-orm"
+import { db } from '$lib/shared/db';
+import { appointment } from '$lib/shared/db/schema';
+import { eq } from 'drizzle-orm';
 
 // TODO: CRUD Operations for TimeSlot
 // export const createTimeSlot = async ({  }) => {
