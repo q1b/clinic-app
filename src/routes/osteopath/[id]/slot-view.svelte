@@ -50,8 +50,9 @@
 	} | null = null;
 
 	let min = getPlainDate({ year: today.year, month: today.month, day: today.day });
-
-	let max = getPlainDate({ year: today.year, month: today.month + 1, day: today.day });
+	let max = getPlainDate({ year: today.year, month: today.month, day: today.day }).add({
+		months: 1
+	});
 
 	let view = {
 		weeks: [[], [], [], [], [], []],

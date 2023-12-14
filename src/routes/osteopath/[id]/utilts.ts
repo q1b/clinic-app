@@ -9,6 +9,7 @@ export function getPlainDate({year,month,day}:{year:number,month:number,day:numb
 		month = 11;
 		is12 = true;
 	}
+  console.log(year,month,day)
 	let today = new Temporal.PlainDate(year, month, day);
   if(is12) {
     today = today.add({

@@ -2,6 +2,7 @@
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import * as Popover from '$lib/components/ui/popover';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import * as Avatar from '$lib/components/ui/avatar';
 
 	import { Toggle } from '$lib/components/ui/toggle';
 	import MultiSelectIcon from '$lib/components/ui/icons/multi-select.svelte';
@@ -17,6 +18,7 @@
 	import { appointment } from '$lib/shared/db/schema';
 	import { eq } from 'drizzle-orm';
 	import { db } from '$lib/shared/db';
+	import { getPlainDate } from '../utilts';
 	const osteopathId = $page?.params?.id;
 	const dispatch = createEventDispatcher<{
 		book: {
@@ -47,7 +49,7 @@
 
 	const today = Temporal.Now.plainDateISO();
 
-	export let selected = [new Temporal.PlainDate(today.year, today.month, today.day)];
+	export let selected = [getPlainDate({ year: today.year, month: today.month, day: today.day })];
 
 	let selectedTimeslot: {
 		id: string;
@@ -56,8 +58,10 @@
 		duration: '30' | '45' | '60';
 	} | null = null;
 
-	let min = new Temporal.PlainDate(today.year, today.month, today.day);
-	let max = new Temporal.PlainDate(today.year, today.month + 1, today.day);
+	let min = getPlainDate({ year: today.year, month: today.month, day: today.day });
+	let max = getPlainDate({ year: today.year, month: today.month, day: today.day }).add({
+		months: 1
+	});
 
 	let view = {
 		weeks: [[], [], [], [], [], []],
@@ -73,14 +77,17 @@
 		date: Temporal.PlainYearMonth;
 	};
 
-	$: header = new Temporal.PlainDate(view.date.year, view.date.month, 1).toLocaleString('en-us', {
-		month: 'long',
-		year: 'numeric'
-	});
+	$: header = getPlainDate({ year: view.date.year, month: view.date.month, day: 1 }).toLocaleString(
+		'en-us',
+		{
+			month: 'long',
+			year: 'numeric'
+		}
+	);
 
 	let firstDayOfMonth: Temporal.PlainDate;
 	let starting_point: Temporal.PlainDate;
-	firstDayOfMonth = new Temporal.PlainDate(view.date.year, view.date.month, 1);
+	firstDayOfMonth = getPlainDate({ year: view.date.year, month: view.date.month, day: 1 });
 
 	if (firstDayOfMonth.dayOfWeek === 7) {
 		starting_point = new Temporal.PlainDate(view.date.year, view.date.month, 1);
@@ -306,9 +313,14 @@
 									</span>
 								{:else if seats.booked.length > 0}
 									<span
-										class="absolute text-sm border border-layer-0 group-disabled:!invisible group-aria-selected:bg-layer-13 group-aria-selected:text-layer-0 text-layer-12 inline-flex items-center justify-center -top-1 -right-1 bg-layer-5 w-4 h-4 rounded"
+										class="absolute top-0 text-sm border border-layer-0 group-disabled:!invisible group-aria-selected:bg-layer-13 group-aria-selected:text-layer-0 text-layer-12 inline-flex items-center justify-center -right-1 bg-layer-5 w-4 h-4 rounded"
 									>
-										<CheckIcon />
+										{seats.available.length}
+									</span>
+									<span
+										class="absolute bottom-0 text-sm border border-layer-0 group-disabled:!invisible group-aria-selected:bg-teal-600 dark:group-aria-selected:bg-teal-300 group-aria-selected:text-layer-0 text-layer-12 inline-flex items-center justify-center -right-1 bg-teal-500 w-4 h-4 rounded"
+									>
+										{seats.booked.length}
 									</span>
 								{/if}
 							</button>
@@ -363,14 +375,13 @@
 		</div>
 		<ul class="flex flex-col gap-y-2">
 			{#if bydates[selected.toString()]}
-				{#each bydates[selected.toString()] as { id, date, startTime: startAt, duration }}
+				{#each bydates[selected.toString()] as { id, date, startTime: startAt, duration, userId, user }}
 					{@const [hour, minute] = startAt?.split(':').map((v) => +v)}
 					{@const startTime = new Temporal.PlainTime(hour, minute)}
 					{@const formattedStartTime = startTime.toLocaleString('en-us', {
 						hour: '2-digit',
 						minute: '2-digit'
 					})}
-
 					{@const endTime = new Temporal.PlainTime(hour, minute).add({
 						minutes: +`${duration}`
 					})}
@@ -379,60 +390,86 @@
 						minute: '2-digit'
 					})}
 					<li class="flex items-center gap-x-2">
-						<button
-							aria-pressed={selectedTimeslot?.id === id}
-							on:click={() => {
-								selectedTimeslot = {
-									id,
-									date,
-									startTime: startAt,
-									duration
-								};
-							}}
-							class="flex group
+						{#if user === null}
+							<button
+								aria-pressed={selectedTimeslot?.id === id}
+								on:click={() => {
+									selectedTimeslot = {
+										id,
+										date,
+										startTime: startAt,
+										duration
+									};
+								}}
+								class="
+								flex group
 							aria-pressed:bg-layer-13
 							aria-pressed:text-layer-0 items-center gap-x-1 px-1.5 py-0.5
 							bg-layer-3 rounded-md"
-						>
-							<span class="whitespace-nowrap tabular-nums">{formattedStartTime}</span>
-							<Dash class="bg-layer-6 group-aria-pressed:bg-layer-0" />
-							<span class="whitespace-nowrap tabular-nums">{formattedEndAt}</span>
-						</button>
-						<DropdownMenu.Root
-							positioning={{
-								placement: 'bottom-end'
-							}}
-						>
-							<DropdownMenu.Trigger>
-								<DotsVertical />
-							</DropdownMenu.Trigger>
-							<DropdownMenu.Content class="w-32">
-								<DropdownMenu.Item
-									on:click={() => {
-										timePicker.dialog?.showModal();
-										timePicker.data = {
-											id,
-											startTime,
-											endTime
-										};
-									}}>Update</DropdownMenu.Item
-								>
-								<DropdownMenu.Item
-									on:click={async () => {
-										const res = await db
-											.delete(appointment)
-											.where(eq(appointment.id, id))
-											.returning();
-										const index = bydates[selected.toString()].findIndex((d) => d.id === id);
-										if (index !== -1) {
-											bydates[selected.toString()].splice(index, 1);
-											bydates = bydates;
-											invalidateView();
-										}
-									}}>Delete</DropdownMenu.Item
-								>
-							</DropdownMenu.Content>
-						</DropdownMenu.Root>
+							>
+								<span class="whitespace-nowrap tabular-nums">{formattedStartTime}</span>
+								<Dash class="bg-layer-6 group-aria-pressed:bg-layer-0" />
+								<span class="whitespace-nowrap tabular-nums">{formattedEndAt}</span>
+							</button>
+							<DropdownMenu.Root
+								positioning={{
+									placement: 'bottom-end'
+								}}
+							>
+								<DropdownMenu.Trigger>
+									<DotsVertical />
+								</DropdownMenu.Trigger>
+								<DropdownMenu.Content class="w-32">
+									<DropdownMenu.Item
+										on:click={() => {
+											timePicker.dialog?.showModal();
+											timePicker.data = {
+												id,
+												startTime,
+												endTime
+											};
+										}}>Update</DropdownMenu.Item
+									>
+									<DropdownMenu.Item
+										on:click={async () => {
+											const res = await db
+												.delete(appointment)
+												.where(eq(appointment.id, id))
+												.returning();
+											const index = bydates[selected.toString()].findIndex((d) => d.id === id);
+											if (index !== -1) {
+												bydates[selected.toString()].splice(index, 1);
+												bydates = bydates;
+												invalidateView();
+											}
+										}}>Delete</DropdownMenu.Item
+									>
+								</DropdownMenu.Content>
+							</DropdownMenu.Root>
+						{:else}
+							<div class="bg-layer-3 flex flex-col px-1.5 py-0.5 gap-y-1 rounded-xl">
+								<div class="flex items-center">
+									<Avatar.Root class="shrink-0 inline">
+										<Avatar.Image src={user.image} alt={user.username} />
+										<Avatar.Fallback>A</Avatar.Fallback>
+									</Avatar.Root>
+									<div class="whitespace-nowrap grow w-0 px-1 overflow-auto">
+										{user.name}
+									</div>
+								</div>
+								<div class="flex items-center">
+									<span class="whitespace-nowrap tabular-nums">{formattedStartTime}</span>
+									<Dash class="bg-layer-6 group-aria-pressed:bg-layer-0" />
+									<span class="whitespace-nowrap tabular-nums">{formattedEndAt}</span>
+								</div>
+								<div class="inline-flex gap-x-1">
+									<span>{user.phone_number}</span>
+									{#if user.phone_number_verified}
+										<CheckIcon />
+									{/if}
+								</div>
+							</div>
+						{/if}
 					</li>
 				{/each}
 			{/if}

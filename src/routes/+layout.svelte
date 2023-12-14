@@ -57,28 +57,27 @@
 	<nav class="inline-flex items-center gap-x-4">
 		<!-- TODO: Adding feature to search bar for Osteopath -->
 		<ThemeButton size={36} />
-		<DropdownMenu.Root
-			positioning={{
-				placement: 'top-end'
-			}}
-		>
-			<DropdownMenu.Trigger asChild let:builder>
-				<Button icon={MenuIcon} builders={[builder]} size="icon" variant="outline" />
-			</DropdownMenu.Trigger>
-			<DropdownMenu.Content class="w-max bg-layer-2 flex flex-col gap-y-2">
-				{#if !data.isLogged}
-					<DropdownMenu.Item asChild>
-						<Button
-							href="/login"
-							class="w-full bg-layer-3 hover:bg-layer-4 items-center justify-start gap-x-2 p-2"
-							variant="ghost"
-							size="sm"
-						>
-							<LogInIcon size={16} />
-							LogIn
-						</Button>
-					</DropdownMenu.Item>
-				{:else}
+		{#if !data.isLogged}
+			<Button
+				href="/login"
+				class="w-full bg-layer-3 hover:bg-layer-4 items-center justify-start gap-x-2 p-2"
+				variant="ghost"
+				size="sm"
+			>
+				<LogInIcon size={16} />
+				LogIn
+			</Button>
+		{/if}
+		{#if data.isLogged}
+			<DropdownMenu.Root
+				positioning={{
+					placement: 'top-end'
+				}}
+			>
+				<DropdownMenu.Trigger asChild let:builder>
+					<Button icon={MenuIcon} builders={[builder]} size="icon" variant="outline" />
+				</DropdownMenu.Trigger>
+				<DropdownMenu.Content class="w-max bg-layer-2 flex flex-col gap-y-2">
 					<DropdownMenu.Item asChild>
 						<Button
 							href="/"
@@ -136,9 +135,9 @@
 							</Button>
 						</form>
 					</DropdownMenu.Item>
-				{/if}
-			</DropdownMenu.Content>
-		</DropdownMenu.Root>
+				</DropdownMenu.Content>
+			</DropdownMenu.Root>
+		{/if}
 	</nav>
 </header>
 

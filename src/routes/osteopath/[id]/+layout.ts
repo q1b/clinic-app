@@ -20,7 +20,11 @@ export const load: LayoutLoad = async (event) => {
 			with: {
 				user: true,
 				appointments: {
-					where: and(gte(appointment.date, t))
+					where: and(gte(appointment.date, t)),
+					// TODO: SECURITY ISSUE RESOLVING THESE VALUES PUBLICALLY, IS A PRIVACY LOOSE
+					with: {
+						user:true
+					}
 				}
 			}
 		});

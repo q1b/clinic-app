@@ -1,5 +1,4 @@
 <script lang="ts">
-	// import * as Table from '$lib/components/ui/table';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { UserPlusIcon } from 'lucide-svelte';
 	import type { PageData } from '../$types';
@@ -18,6 +17,7 @@
 	let loading = false;
 </script>
 
+<!-- Implementing User:Delete -->
 <div class="max-w-5xl w-full px-4">
 	<div class="sm:flex sm:items-center mb-10">
 		<div class="sm:flex-auto">
@@ -45,7 +45,7 @@
 
 <dialog
 	bind:this={dialogEl}
-	class="p-4 w-full max-w-xs rounded-md bg-layer-3 backdrop:backdrop-blur-sm"
+	class="p-4 w-full max-w-xs rounded-md bg-layer-3 backdrop:backdrop-blur-sm border border-layer-7"
 >
 	<form
 		method="post"
@@ -89,7 +89,7 @@
 				/>
 			</div>
 			<div class="ml-3 text-sm sm:text-base leading-6">
-				<label for="is-osteopath" class="font-medium text-gray-900">osteopath ?</label>
+				<label for="is-osteopath" class="font-medium text-layer-12">osteopath ?</label>
 			</div>
 		</div>
 		<div class="inline-flex gap-x-4 mt-4">
