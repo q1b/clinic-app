@@ -5,7 +5,7 @@ import {
   defineConfig,
   minimalPreset,
   AppleSplashScreenName,
-  AppleSplashScreens
+  AppleSplashScreens,
 } from '@vite-pwa/assets-generator/config'
 import { ResizeOptions } from 'sharp'
 

@@ -29,7 +29,12 @@
 			userId: string | null;
 		}[]
 	>;
-	let [year, month, day] = getNums(Object.keys(bydates)[0], '-');
+
+	const now = Temporal.Now.plainDateISO();
+
+	let [year, month, day] = bydates[0]
+		? getNums(Object.keys(bydates)[0], '-')
+		: [now.year, now.month, now.day];
 
 	let is12 = false;
 
