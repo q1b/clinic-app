@@ -23,7 +23,7 @@ export const load: LayoutLoad = async (event) => {
 					where: and(gte(appointment.date, t)),
 					// TODO: SECURITY ISSUE RESOLVING THESE VALUES PUBLICALLY, IS A PRIVACY LOOSE
 					with: {
-						user:true
+						user: true
 					}
 				}
 			}
@@ -33,5 +33,5 @@ export const load: LayoutLoad = async (event) => {
 	} catch (error) {
 		throw fail(404);
 	}
-	throw redirect(307, '/');
+	redirect(307, '/');
 };

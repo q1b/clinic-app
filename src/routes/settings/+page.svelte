@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/button/button.svelte';
+	import ImageUpload from './image-upload.svelte';
 	import { SaveIcon } from 'lucide-svelte';
 	import type { PageData } from './$types';
 	import { states } from './constants';
@@ -16,6 +17,18 @@
 	};
 </script>
 
+<div
+	class="bg-layer-2 shadow-sm shadow-layer-6 ring-1 ring-layer-3/5 rounded-xl w-full max-w-lg mb-10"
+>
+	<div class="px-4 py-6 sm:p-8">
+		<h2 class="text-base font-semibold leading-7 text-layer-12">Avatar Image</h2>
+		<p class="mt-1 text-sm leading-6 text-layer-11 mb-4">
+			This Avatar image is used to show your profile picture in the app.
+		</p>
+		<ImageUpload />
+	</div>
+</div>
+
 <form
 	method="POST"
 	action="?/profile"
@@ -30,6 +43,12 @@
 			</p>
 		</div>
 		<div class="flex flex-col gap-x-6 gap-y-6">
+			<div class="">
+				<label for="photo" class="block text-sm font-medium leading-6 text-layer-11">Photo</label>
+				<div class="mt-2 flex items-center gap-x-3">
+					<input type="file" id="file" name="fileToUpload" required />
+				</div>
+			</div>
 			<div class="">
 				<label for="full-name" class="block text-sm font-medium leading-6 text-layer-12">
 					Full Name

@@ -42,7 +42,7 @@ export const actions: Actions = {
 		}
 		// redirect to
 		// make sure you don't throw inside a try/catch block!
-		if(isRedirected === 'true') throw redirect(302, "/");
+		if(isRedirected === 'true') redirect(302, "/");
 		return {
 			validated: true
 		}

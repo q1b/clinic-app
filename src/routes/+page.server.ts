@@ -10,6 +10,6 @@ export const actions: Actions = {
 		await auth.invalidateSession(session.sessionId); // invalidate session
 		event.locals.session = null;
 		lucia.setSession(null);
-		throw redirect(303, '/'); // redirect to home page
+		redirect(303, '/'); // redirect to home page
 	}
 };
