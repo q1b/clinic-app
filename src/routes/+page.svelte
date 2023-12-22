@@ -3,7 +3,7 @@
 	export let data: PageData;
 </script>
 
-<h1 class="text-3xl mb-8">Osteopaths</h1>
+<h1 class="text-3xl mb-12">Available Osteopaths</h1>
 <div
 	class="w-full max-w-5xl grid sm:grid-cols-2 md:grid-cols-3 gap-y-6 sm:gap-4 md:gap-10 lg:gap-12 px-2 xs:px-4"
 >

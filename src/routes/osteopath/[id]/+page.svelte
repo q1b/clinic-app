@@ -37,22 +37,24 @@
 	<View
 		bydates={data.by.dates}
 		on:book={async (e) => {
-			const response = await fetch(`/osteopath/${osteopathId}/api/`, {
-				method: 'POST',
-				body: JSON.stringify({
-					...e.detail,
-					osteopathUserId,
-					osteopathEmail: data.osteopathUser.email,
-					osteopathId,
-					userId,
-					userEmail: data.user.email
-				}),
-				headers: {
-					'content-type': 'application/json'
-				}
-			});
-			console.log(await response.json());
 			if (!data.isLogged) dialogOpen = true;
+			else {
+				const response = await fetch(`/osteopath/${osteopathId}/api/`, {
+					method: 'POST',
+					body: JSON.stringify({
+						...e.detail,
+						osteopathUserId,
+						osteopathEmail: data.osteopathUser.email,
+						osteopathId,
+						userId,
+						userEmail: data.user.email
+					}),
+					headers: {
+						'content-type': 'application/json'
+					}
+				});
+				console.log(await response.json());
+			}
 		}}
 	/>
 	{#if userId === osteopathUserId}

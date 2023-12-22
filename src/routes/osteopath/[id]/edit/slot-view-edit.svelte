@@ -390,7 +390,7 @@
 						minute: '2-digit'
 					})}
 					<li class="flex items-center gap-x-2">
-						{#if user === null}
+						{#if !!!user}
 							<button
 								aria-pressed={selectedTimeslot?.id === id}
 								on:click={() => {

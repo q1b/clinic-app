@@ -49,8 +49,7 @@
 			</div>
 		{:else}
 			<a href="/" class="inline-flex gap-x-2 items-center p-2 bg-layer-3 rounded-lg tabular-nums">
-				<span>{now.toLocaleString()}</span>
-				<CalendarIcon />
+				<HomeIcon />
 			</a>
 		{/if}
 	</div>

@@ -5,7 +5,6 @@
 	import * as Avatar from '$lib/components/ui/avatar';
 
 	let imageState: 'Removing' | 'Syncing' | 'Uploading' | 'idle' = 'idle';
-	let { setImage, getImage } = $props();
 
 	async function handleImageUpload(e: InputChangeEvent) {
 		console.log('Request to cloudinary has been sended!');
