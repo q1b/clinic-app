@@ -104,7 +104,6 @@
 				available: [] as (typeof bydates)[string]
 			};
 			for (let i = 0; i < bydates[starting_point.toString()]?.length; i++) {
-				console.log(bydates[starting_point.toString()][i].userId);
 				if (bydates[starting_point.toString()][i].userId) {
 					seats.booked.push(bydates[starting_point.toString()][i]);
 				} else {

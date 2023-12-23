@@ -36,13 +36,6 @@
 		? getNums(Object.keys(bydates)[0], '-')
 		: [now.year, now.month, now.day];
 
-	let is12 = false;
-
-	if (month === 12) {
-		month = 11;
-		is12 = true;
-	}
-
 	let today = getPlainDate({ year, month, day });
 
 	export let selected = getPlainDate({ year: today.year, month: today.month, day: today.day });
