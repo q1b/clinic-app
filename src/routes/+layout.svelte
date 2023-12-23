@@ -18,6 +18,7 @@
 	import { enhance } from '$app/forms';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import Logo from '$lib/components/logo.svelte';
+	import { Toaster } from 'svelte-sonner';
 	// import { setContext } from 'svelte';
 	// import { writable } from 'svelte/store';
 	// import { createLocalStorage, persist } from '@macfja/svelte-persistent-store';
@@ -176,5 +177,9 @@
 	<div class="hidden xl:block 2xl:hidden">xl</div>
 	<div class="hidden 2xl:block">2xl</div>
 </div>
+
+<!-- ... -->
+
+<Toaster />
 
 <style lang="postcss"></style>

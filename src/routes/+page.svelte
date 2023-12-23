@@ -54,4 +54,3 @@
 		{error.message}
 	{/await}
 </div>
-<!-- <pre>{JSON.stringify(osteopaths[], null, 2)}</pre> -->

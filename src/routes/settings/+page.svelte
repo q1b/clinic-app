@@ -4,6 +4,7 @@
 	import { SaveIcon } from 'lucide-svelte';
 	import type { PageData } from './$types';
 	import { states } from './constants';
+	import * as Avatar from '$lib/components/ui/avatar';
 	export let data: PageData;
 	$: keys = {
 		sms: {
@@ -25,7 +26,20 @@
 		<p class="mt-1 text-sm leading-6 text-layer-11 mb-4">
 			This Avatar image is used to show your profile picture in the app.
 		</p>
-		<ImageUpload />
+		<div class="flex flex-col items-center justify-center gap-y-4">
+			<Avatar.Root class="w-24 h-24">
+				<Avatar.Image src={data.user?.image} alt="@{data.user?.name}" />
+				<Avatar.Fallback>
+					{data.user?.name?.at(0) ?? 'C' + data.user?.name?.at(1) ?? 'N'}
+				</Avatar.Fallback>
+			</Avatar.Root>
+			<ImageUpload
+				imageSrc={data.user?.image}
+				setImageSrc={(src) => {
+					data.user && (data.user.image = src);
+				}}
+			/>
+		</div>
 	</div>
 </div>
 
@@ -43,12 +57,6 @@
 			</p>
 		</div>
 		<div class="flex flex-col gap-x-6 gap-y-6">
-			<div class="">
-				<label for="photo" class="block text-sm font-medium leading-6 text-layer-11">Photo</label>
-				<div class="mt-2 flex items-center gap-x-3">
-					<input type="file" id="file" name="fileToUpload" required />
-				</div>
-			</div>
 			<div class="">
 				<label for="full-name" class="block text-sm font-medium leading-6 text-layer-12">
 					Full Name

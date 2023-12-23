@@ -9,7 +9,7 @@
 	import { ArrowRightCircleIcon, Edit } from 'lucide-svelte';
 	import { extractFromEmail } from '$lib/utils';
 	import Dash from '$lib/components/dash.svelte';
-
+	import { toast } from 'svelte-sonner';
 	export let data: PageData;
 
 	$: osteopathUserId = data.osteopathUser.id;
@@ -22,6 +22,8 @@
 	let dialogOpen = false;
 	let profileDialogOpen = false;
 	let tab: 'signup' | 'login' = 'signup';
+
+	let booking = false;
 </script>
 
 <div class="flex flex-col items-center gap-y-12">
@@ -39,21 +41,37 @@
 		on:book={async (e) => {
 			if (!data.isLogged) dialogOpen = true;
 			else {
-				const response = await fetch(`/osteopath/${osteopathId}/api/`, {
-					method: 'POST',
-					body: JSON.stringify({
-						...e.detail,
-						osteopathUserId,
-						osteopathEmail: data.osteopathUser.email,
-						osteopathId,
-						userId,
-						userEmail: data.user.email
-					}),
-					headers: {
-						'content-type': 'application/json'
-					}
-				});
-				console.log(await response.json());
+				if (!booking) {
+					booking = true;
+					toast('Booking Your Appointment');
+					fetch(`/osteopath/${osteopathId}/api/`, {
+						method: 'POST',
+						body: JSON.stringify({
+							...e.detail,
+							osteopathUserId,
+							osteopathEmail: data.osteopathUser.email,
+							osteopathId,
+							userId,
+							userEmail: data.user.email
+						}),
+						headers: {
+							'content-type': 'application/json'
+						}
+					})
+						.then(async (res) => {
+							const result = await res.json();
+							toast('Your Appointment is Booked Successfully!');
+							console.log(result);
+						})
+						.catch((e) => {
+							console.log(e);
+						})
+						.finally(() => {
+							booking = false;
+						});
+				} else {
+					toast('Your Appointment Booking Process is in Progress!');
+				}
 			}
 		}}
 	/>

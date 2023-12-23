@@ -2,9 +2,11 @@
 	import { uploadImage, type InputChangeEvent } from '$lib/utils/upload';
 	import { page } from '$app/stores';
 	import { Loader2Icon, UploadIcon } from 'lucide-svelte';
-	import * as Avatar from '$lib/components/ui/avatar';
 
 	let imageState: 'Removing' | 'Syncing' | 'Uploading' | 'idle' = 'idle';
+
+	export let imageSrc: string | undefined | null;
+	export let setImageSrc: (src: string) => void;
 
 	async function handleImageUpload(e: InputChangeEvent) {
 		console.log('Request to cloudinary has been sended!');
@@ -18,8 +20,8 @@
 			return match ? match[1] : null;
 		};
 
-		if ($page.data.user && $page.data.user.image) {
-			const publicID = getPublicIdFromUrl($page.data.user.image);
+		if (imageSrc) {
+			const publicID = getPublicIdFromUrl(imageSrc);
 			console.log('Requesting Server to remove previous image with', publicID, ' as Public ID');
 			if (publicID) {
 				imageState = 'Removing';
@@ -36,7 +38,7 @@
 
 		console.log('Request to Database has been sended!', res);
 		if ($page.data && $page.data.user) {
-			$page.data.user.image = res.url;
+			setImageSrc && setImageSrc(res.url);
 			imageState = 'Syncing';
 			await fetch('/image', {
 				method: 'POST',
@@ -46,7 +48,6 @@
 			imageState = 'idle';
 		}
 	}
-	console.log($page.data);
 </script>
 
 {#if imageState !== 'idle'}
@@ -56,12 +57,6 @@
 {/if}
 
 <div class="flex flex-col items-center justify-center gap-y-4">
-	<Avatar.Root class="w-24 h-24">
-		<Avatar.Image src={$page.data.user?.image} alt="@{$page.data.user?.name}" />
-		<Avatar.Fallback>
-			{$page.data.user?.name?.at(0) ?? 'C' + $page.data.user?.name?.at(1) ?? 'N'}
-		</Avatar.Fallback>
-	</Avatar.Root>
 	<div class="">
 		<label
 			class="px-2 py-1 border border-layer-6 rounded-md bg-layer-2 hover:bg-layer-1 cursor-pointer flex items-center gap-x-2 w-max transition-colors"
