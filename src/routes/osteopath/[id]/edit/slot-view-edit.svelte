@@ -173,6 +173,8 @@
 			id: undefined
 		}
 	};
+
+	let addTimePopOverOpen = false;
 </script>
 
 <div class="flex flex-col sm:flex-row relative">
@@ -344,7 +346,7 @@
 					.reverse()
 					.join(' ')}
 			</h4>
-			<Popover.Root positioning={{ placement: 'bottom-end' }}>
+			<Popover.Root positioning={{ placement: 'bottom-end' }} bind:open={addTimePopOverOpen}>
 				<Popover.Trigger
 					class="ml-2 inline-flex items-center gap-x-1 bg-[--blue-4] hover:bg-[--blue-5] text-[--blue-12] px-1 py-0.5 rounded-md"
 				>
@@ -365,6 +367,7 @@
 							}
 							bydates = bydates;
 							invalidateView();
+							addTimePopOverOpen = false;
 						}}
 						method="add"
 						selected={new Temporal.PlainTime(9, 0, 0)}
