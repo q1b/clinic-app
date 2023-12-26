@@ -53,10 +53,10 @@
 			header: 'Bos | Mos'
 		}),
 		table.column({
-			accessor: ({ id }) => id,
+			accessor: ({ id, osteopath }) => ({ id, isOsteopath: osteopath?.id ? true : false }),
 			header: '',
-			cell: ({ value }) => {
-				return createRender(DataTableActions, { id: value });
+			cell: ({ value: { id, isOsteopath } }) => {
+				return createRender(DataTableActions, { id, isOsteopath });
 			}
 		})
 	]);
